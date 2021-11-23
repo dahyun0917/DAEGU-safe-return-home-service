@@ -1,9 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/login"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:clipToOutline="true"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/blackblue">
 
-    />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="bottom|center"
+        android:orientation="vertical"
+        android:layout_weight="2"
+        android:padding="20dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="대구 광역시 위험 골목 기반"
+            android:textSize="30dp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="안심 귀가"
+            android:textColor="@color/white"
+            android:textSize="60dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:gravity="center_vertical|bottom"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/white"
+            android:enabled="true"
+            android:hint="아이디"
+            android:textColorHint="@color/white"
+            android:textSize="25dp"></EditText>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/white"
+            android:enabled="true"
+            android:hint="비밀번호"
+            android:textColorHint="@color/white"
+            android:textSize="25dp"></EditText>
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="자동로그인"
+            android:textColor="@color/white"
+            android:textSize="15dp"></CheckBox>
+        <Button
+            android:id="@+id/btn_log"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="로그인"
+            android:padding="15dp"
+            android:backgroundTint="@color/whitegreen"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            ></Button>
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="top"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="아이디 찾기 | 비밀번호 찾기 | 회원가입"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            android:gravity="center"
+            android:padding="15dp"></TextView>
+
+    </LinearLayout>
+
+</LinearLayout>

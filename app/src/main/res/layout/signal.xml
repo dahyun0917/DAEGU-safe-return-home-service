@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dark"
+    android:gravity="center">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="2">
+
+    </LinearLayout>
+    <ImageView
+        android:id="@+id/signal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:padding="20dp"
+        android:layout_margin="20dp"
+        android:layout_weight="4"
+        android:src="@drawable/signal"
+        ></ImageView>
+    <!--android:focusableInTouchMode="true"-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:padding="20dp"
+        android:text="현재의 상황이 녹음되고 있고,\n가장 근방의 경찰서인 대현 경찰서에\n USER님의 위치와 함께\n 신고 완료 되었습니다."
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        android:layout_weight="3"
+        android:gravity="center"></TextView>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="신고 취소하기"
+            android:textSize="30dp"
+            android:padding="10dp"
+            android:backgroundTint="@color/redpink"></Button>
+    </LinearLayout>
+</LinearLayout>
