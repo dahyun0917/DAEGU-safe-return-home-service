@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "103526001818",
+    "project_id": "daegu-safe-return-home",
+    "storage_bucket": "daegu-safe-return-home.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:103526001818:android:09bb0f8ebc455f885a4323",
+        "android_client_info": {
+          "package_name": "com.example.safe_return_home_service"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "103526001818-phtmvkoul9vtmhici1irefbuco0nakhc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.safe_return_home_service",
+            "certificate_hash": "2ec1505192f92b76fb97329a2efbeff4643363db"
+          }
+        },
+        {
+          "client_id": "103526001818-npacgve5n6kllkutmv0s72mgc9v13cp8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgmnPBw7fPO3aP-maDGE0vvVNg40nQL3w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "103526001818-npacgve5n6kllkutmv0s72mgc9v13cp8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -38,26 +38,31 @@
         android:padding="20dp">
 
         <EditText
+            android:id="@+id/idEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:backgroundTint="@color/white"
             android:enabled="true"
             android:hint="아이디"
-            android:textColorHint="@color/white"
+            android:textColorHint="@color/blue"
+            android:textColor="@color/white"
             android:textSize="25dp"></EditText>
 
         <EditText
+            android:id="@+id/passwordEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:backgroundTint="@color/white"
             android:enabled="true"
             android:hint="비밀번호"
-            android:textColorHint="@color/white"
+            android:textColorHint="@color/blue"
+            android:textColor="@color/white"
             android:textSize="25dp"></EditText>
 
         <CheckBox
+            android:id="@+id/autologin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="자동로그인"
