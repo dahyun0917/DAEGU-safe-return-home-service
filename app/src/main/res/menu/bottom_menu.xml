@@ -8,28 +8,20 @@
         app:showAsAction="always"
         android:enabled="true"
         android:icon="@drawable/mice"
-        android:title="Mice" />
+        android:title="녹음" />
     <item
-        android:id="@+id/second_tab"
+        android:id="@+id/signal"
         app:showAsAction="always"
         android:enabled="true"
-        android:icon="@drawable/cctv"
-        android:title="CCTV"/>
+        android:icon="@drawable/signal"
+        android:title="신고하기" />
 
     <item
-        android:id="@+id/third_tab"
+        android:id="@+id/setting"
         app:showAsAction="always"
         android:enabled="true"
-        android:icon="@drawable/records"
-        android:title="Record">
-    </item>
-
-    <item
-        android:id="@+id/fourth_tab"
-        app:showAsAction="always"
-        android:enabled="true"
-        android:icon="@drawable/settings"
-        android:title="Setting">
+        android:icon="@drawable/setting"
+        android:title="설정">
     </item>
 
 </menu>

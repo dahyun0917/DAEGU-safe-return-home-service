@@ -1,25 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-   <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-       xmlns:tools="http://schemas.android.com/tools"
-       android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-       android:orientation="horizontal">
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal">
     <!-- 네이버 지도 -->
-    <com.naver.maps.map.MapView
-        android:id="@+id/map_view"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:ignore="MissingClass" />
+        android:layout_height="match_parent">
+        <com.naver.maps.map.MapView
+            android:id="@+id/map_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:ignore="MissingClass" />
+        <com.naver.maps.map.widget.LocationButtonView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|start"
+            android:layout_margin="12dp"
+            android:id="@+id/currentLocationButton">
+        </com.naver.maps.map.widget.LocationButtonView>
 
-    <com.naver.maps.map.widget.LocationButtonView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|start"
-        android:layout_margin="12dp"
-        android:id="@+id/currentLocationButton">
-    </com.naver.maps.map.widget.LocationButtonView>
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_menu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/border_bottomblue"
+            app:itemTextColor="@color/bottom_navigation_item_selector"
+            app:itemIconTint="@color/bottom_navigation_item_selector"
+            app:labelVisibilityMode="labeled"
 
-    </LinearLayout>
+            app:menu="@menu/bottom_menu"/>
+    </FrameLayout>
+
+
+
+</LinearLayout>
 
