@@ -6,12 +6,14 @@
         <entry key="app/src/main/res/drawable/border.xml" value="0.36770833333333336" />
         <entry key="app/src/main/res/drawable/border_bottomblue.xml" value="0.36770833333333336" />
         <entry key="app/src/main/res/drawable/border_green.xml" value="0.36770833333333336" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.24479166666666666" />
+        <entry key="app/src/main/res/drawable/outline.xml" value="0.17685185185185184" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.165" />
         <entry key="app/src/main/res/layout/information.xml" value="0.3515625" />
         <entry key="app/src/main/res/layout/login.xml" value="0.35052083333333334" />
         <entry key="app/src/main/res/layout/record.xml" value="0.3515625" />
         <entry key="app/src/main/res/layout/signal.xml" value="0.3515625" />
         <entry key="app/src/main/res/menu/bottom_menu.xml" value="0.25" />
+        <entry key="app/src/main/res/menu/top_menu.xml" value="0.1" />
       </map>
     </option>
   </component>

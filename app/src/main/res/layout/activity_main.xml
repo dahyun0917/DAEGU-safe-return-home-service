@@ -9,11 +9,13 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <com.naver.maps.map.MapView
             android:id="@+id/map_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:ignore="MissingClass" />
+            tools:ignore="MissingClass"></com.naver.maps.map.MapView>
+
         <com.naver.maps.map.widget.LocationButtonView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -26,14 +28,53 @@
             android:id="@+id/bottom_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
             android:layout_alignParentBottom="true"
-            android:background="@drawable/border_bottomblue"
-            app:itemTextColor="@color/bottom_navigation_item_selector"
-            app:itemIconTint="@color/bottom_navigation_item_selector"
-            app:labelVisibilityMode="labeled"
+            android:layout_gravity="bottom"
 
-            app:menu="@menu/bottom_menu"/>
+            android:background="@drawable/border_bottomblue"
+            app:itemIconTint="@color/blue"
+            app:itemTextColor="@color/bottom_navigation_item_selector"
+            app:labelVisibilityMode="unlabeled"
+            app:menu="@menu/bottom_menu" />
+
+        <ImageButton
+            android:id="@+id/btn_cctv"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_gravity="left|top"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="580dp"
+            android:background="@drawable/outline"
+            android:padding="5dp"
+            android:src="@drawable/cctv"
+
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"></ImageButton>
+        <ImageButton
+            android:id="@+id/btn_police"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_gravity="left|top"
+            android:layout_marginLeft="68dp"
+            android:layout_marginTop="580dp"
+            android:background="@drawable/outline"
+            android:src="@drawable/police"
+            android:adjustViewBounds="true"
+            android:padding="5dp"
+            android:scaleType="fitCenter"></ImageButton>
+        <ImageButton
+            android:id="@+id/btn_store"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_gravity="left|top"
+            android:layout_marginLeft="128dp"
+            android:layout_marginTop="580dp"
+            android:background="@drawable/outline"
+            android:src="@drawable/store"
+            android:adjustViewBounds="true"
+            android:padding="5dp"
+            android:scaleType="fitCenter"></ImageButton>
+
     </FrameLayout>
 
 

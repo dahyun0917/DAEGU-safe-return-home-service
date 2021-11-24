@@ -2,17 +2,22 @@ package com.example.safe_return_home_service
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.media.Image
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.View
+import android.widget.ImageButton
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.PermissionChecker
 import androidx.fragment.app.FragmentManager
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.util.FusedLocationSource
@@ -35,10 +40,27 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         setContentView(R.layout.activity_main)
         //네이버 지도
         //mapView = findViewById<View>(R.id.map_view) as MapView
-
+        var btn_cctv = findViewById<ImageButton>(R.id.btn_cctv)
+        var btn_store = findViewById<ImageButton>(R.id.btn_store)
+        var btn_police = findViewById<ImageButton>(R.id.btn_police)
+        var btn_mike = findViewById<BottomNavigationView>(R.id.mice)
+        var btn_setting = findViewById<BottomNavigationView>(R.id.setting)
+        var btn_signal = findViewById<BottomNavigationView>(R.id.signal)
         mapView!!.onCreate(savedInstanceState)
         mapView!!.getMapAsync(this)
 
+        btn_setting.setOnClickListener{
+            val intent = Intent(this,setting ::class.java)
+            startActivity(intent)
+        }
+        btn_mike.setOnClickListener{
+            val intent = Intent(this,record_list ::class.java)
+            startActivity(intent)
+        }
+        btn_signal.setOnClickListener{
+            val intent = Intent(this,signal ::class.java)
+            startActivity(intent)
+        }
 //        locationSource = FusedLocationSource(this,LOCATION_PERMISSION_REQUEST_CODE)
 //        naverMap.locationSource = locationSource
 //        var fragmentManager : FragmentManager = supportFragmentManager;
