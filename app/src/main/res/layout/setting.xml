@@ -11,7 +11,7 @@
         android:textSize="30dp"
         android:textStyle="bold"
         android:gravity="center"
-        android:layout_weight="1">
+        android:layout_weight="3">
     </TextView>
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,6 +25,8 @@
             android:text="신고한 내역"
             android:textSize="25dp"
             android:gravity="center"
+            android:layout_margin="20dp"
+            android:padding="10dp"
             android:background="@drawable/under_dotted"></TextView>
 
         <TextView
@@ -33,8 +35,32 @@
             android:text="보호자 연락처 수정"
             android:textSize="25dp"
             android:gravity="center"
+            android:layout_margin="20dp"
+            android:padding="10dp"
             android:background="@drawable/under_dotted"></TextView>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="회원정보 수정"
+            android:textSize="25dp"
+            android:gravity="center"
+            android:layout_margin="20dp"
+            android:padding="10dp"
+            android:background="@drawable/under_dotted"></TextView>
+
+        <Switch
+            android:id="@+id/visibilitySwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:switchMinWidth="60dp"
+            android:switchPadding="20dp"
+            android:textSize="25dp"
+            android:gravity="center"
+            android:layout_margin="20dp"
+            android:padding="10dp"
+            android:background="@drawable/under_dotted"
+            android:text="자동 녹음기능" />
             
 
     </LinearLayout>
