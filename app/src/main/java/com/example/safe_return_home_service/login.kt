@@ -1,5 +1,6 @@
 package com.example.safe_return_home_service
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -72,6 +73,8 @@ class login: AppCompatActivity() {
         autologin.setOnCheckedChangeListener { compoundButton, b ->
             if(autologin.isChecked==true)
                 count=1
+            else
+                count=0
         }
     }
     // 로그인
@@ -104,4 +107,14 @@ class login: AppCompatActivity() {
             finish()
         }
     }
+
+    /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == Activity.RESULT_OK) {
+            count = data!!.getIntExtra("Count",0)
+            Toast.makeText(applicationContext,"count: $count",Toast.LENGTH_SHORT).show()
+        }
+    }*/
 }
