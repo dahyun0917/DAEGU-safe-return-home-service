@@ -122,11 +122,11 @@ class signal: AppCompatActivity() {
         //var sms = "안녕";
 
         sms = SmsManager.getDefault()
-        sms.sendTextMessage(phoneNo, null, "안녕", null,null)*/
+        sms.sendTextMessage(phoneNo, null, "안녕", null,null)
 
 
 
-    }
+    }*/
 
 
 
