@@ -46,9 +46,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
     lateinit var btn_store : ImageButton
     lateinit var btn_police : ImageButton
     lateinit var btn_moni : ImageButton
-
-
-
     // private val locationManager= context
     //    .getSystemService(Context.LOCATION_SERVICE) as LocationManager?
 
