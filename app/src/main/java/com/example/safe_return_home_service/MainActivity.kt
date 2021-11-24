@@ -9,12 +9,17 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.media.Image
+import android.media.MediaRecorder
 import android.os.Bundle
+import android.os.Environment
 import android.os.PersistableBundle
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -22,6 +27,8 @@ import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.util.FusedLocationSource
 import com.naver.maps.map.widget.LocationButtonView
+import java.io.IOException
+import java.util.*
 import java.util.jar.Manifest
 
 
@@ -30,6 +37,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
     private val mapView: MapView by lazy{findViewById(R.id.map_view)}
     private lateinit var locationSource : FusedLocationSource
     private lateinit var naverMap : NaverMap
+    lateinit var btn_mike : ImageButton
+    lateinit var btn_setting : ImageButton
+    lateinit var btn_signal : ImageButton
+    lateinit var btn_cctv : ImageButton
+    lateinit var btn_store : ImageButton
+    lateinit var btn_police : ImageButton
+
+
+
    // private val locationManager= context
     //    .getSystemService(Context.LOCATION_SERVICE) as LocationManager?
 
@@ -40,12 +56,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         setContentView(R.layout.activity_main)
         //네이버 지도
         //mapView = findViewById<View>(R.id.map_view) as MapView
-        var btn_cctv = findViewById<ImageButton>(R.id.btn_cctv)
-        var btn_store = findViewById<ImageButton>(R.id.btn_store)
-        var btn_police = findViewById<ImageButton>(R.id.btn_police)
-        var btn_mike = findViewById<BottomNavigationView>(R.id.mice)
-        var btn_setting = findViewById<BottomNavigationView>(R.id.setting)
-        var btn_signal = findViewById<BottomNavigationView>(R.id.signal)
+        btn_cctv = findViewById<ImageButton>(R.id.btn_cctv)
+        btn_store = findViewById<ImageButton>(R.id.btn_store)
+        btn_police = findViewById<ImageButton>(R.id.btn_police)
+        btn_mike = findViewById<ImageButton>(R.id.mike)
+        btn_setting = findViewById<ImageButton>(R.id.setting)
+        btn_signal = findViewById<ImageButton>(R.id.signal)
         mapView!!.onCreate(savedInstanceState)
         mapView!!.getMapAsync(this)
 
@@ -56,6 +72,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         btn_mike.setOnClickListener{
             val intent = Intent(this,record_list ::class.java)
             startActivity(intent)
+
         }
         btn_signal.setOnClickListener{
             val intent = Intent(this,signal ::class.java)
@@ -133,4 +150,5 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         super.onLowMemory()
         mapView?.onLowMemory()
     }
+
 }
