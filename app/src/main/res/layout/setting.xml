@@ -6,18 +6,20 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:text="환경설정"
-        android:textSize="30dp"
+        android:textSize="40dp"
         android:textStyle="bold"
         android:gravity="center"
-        android:layout_weight="1">
+        android:textColor="@color/black"
+        android:layout_weight="1.5">
     </TextView>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_height="0dp"
+        android:layout_weight="6"
+        android:orientation="vertical"
+        android:gravity="center">
 
         <TextView
             android:layout_width="match_parent"
@@ -25,6 +27,9 @@
             android:text="신고한 내역"
             android:textSize="25dp"
             android:gravity="center"
+            android:layout_margin="20dp"
+            android:textColor="@color/gray"
+            android:padding="10dp"
             android:background="@drawable/under_dotted"></TextView>
 
         <TextView
@@ -32,10 +37,70 @@
             android:layout_height="wrap_content"
             android:text="보호자 연락처 수정"
             android:textSize="25dp"
+            android:textColor="@color/gray"
             android:gravity="center"
+            android:layout_margin="20dp"
+            android:padding="10dp"
+            android:background="@drawable/under_dotted"></TextView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:layout_margin="20dp"
+            android:background="@drawable/under_dotted">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="흔들기 횟수 설정"
+                android:gravity="center"
+                android:textColor="@color/gray"
+                android:layout_weight="5"
+                android:textSize="25dp"
+                ></TextView>
+            <Spinner
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5"
+                android:spinnerMode="dropdown"
+                ></Spinner>
+        </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="회원정보 수정"
+            android:textSize="25dp"
+            android:gravity="center"
+            android:textColor="@color/gray"
+            android:layout_margin="20dp"
+            android:padding="10dp"
             android:background="@drawable/under_dotted"></TextView>
 
-            
+        <Switch
+            android:id="@+id/visibilitySwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:switchMinWidth="60dp"
+            android:switchPadding="20dp"
+            android:textSize="25dp"
+            android:gravity="center"
+            android:textColor="@color/gray"
+            android:layout_margin="20dp"
+            android:padding="10dp"
+            android:background="@drawable/under_dotted"
+            android:text="자동 녹음기능 On/Off" />
+
 
     </LinearLayout>
+    <Button
+        android:id="@+id/btn_logout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:text="로그아웃"
+        android:textSize="25dp"
+        android:layout_margin="20dp"
+        android:layout_weight="0.8"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/bottomblue"></Button>
+
 </LinearLayout>
