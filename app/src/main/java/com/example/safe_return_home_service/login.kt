@@ -19,6 +19,7 @@ class login: AppCompatActivity() {
     lateinit var idEditText: EditText
     lateinit var passwordEditText: EditText
     lateinit var autologin: CheckBox
+    lateinit var signup : Button
     var count = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,11 +31,11 @@ class login: AppCompatActivity() {
         idEditText = findViewById(R.id.idEditText)
         passwordEditText=findViewById(R.id.passwordEditText)
         autologin=findViewById(R.id.autologin)
-
+        signup= findViewById(R.id.signup)
         // 회원가입 창으로
-        /*signupButton.setOnClickListener {
-            startActivity(Intent(this,SignupActivity::class.java))
-        }*/
+        signup.setOnClickListener {
+            startActivity(Intent(this,SignUp::class.java))
+        }
 
         // SharedPreferences 안에 값이 저장되어 있지 않을 때 -> Login
         if(MySharedPreferences.getUserId(this).isNullOrBlank()

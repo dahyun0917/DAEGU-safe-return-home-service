@@ -14,30 +14,101 @@
             android:id="@+id/map_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:ignore="MissingClass"></com.naver.maps.map.MapView>
+            tools:ignore="MissingClass">
+
+            <EditText
+                android:id="@+id/start"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:background="@drawable/outline"
+                android:ems="10"
+                android:hint="출발지"
+                android:inputType="textPersonName"
+                android:textSize="24sp" />
+        </com.naver.maps.map.MapView>
+
+
+        <EditText
+            android:id="@+id/arrive"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/outline"
+            android:ems="10"
+            android:hint="도착지"
+            android:inputType="textPersonName"
+            android:textSize="24sp" />
+
+            <Button
+                android:id="@+id/load"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:layout_marginLeft="300dp"
+                android:text="길찾기" />
+
 
         <com.naver.maps.map.widget.LocationButtonView
+            android:id="@+id/currentLocationButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="top|start"
-            android:layout_margin="12dp"
-            android:id="@+id/currentLocationButton">
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="80dp"
+            android:layout_marginRight="20dp">
+
         </com.naver.maps.map.widget.LocationButtonView>
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottom_menu"
+
+        <LinearLayout
+            android:layout_height="70dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:layout_weight="1"
             android:layout_gravity="bottom"
-
             android:background="@drawable/border_bottomblue"
-            app:itemIconTint="@color/blue"
-            app:itemTextColor="@color/bottom_navigation_item_selector"
-            app:labelVisibilityMode="unlabeled"
-            app:menu="@menu/bottom_menu" />
-
-        <ImageButton
+            >
+            <ImageButton
+                android:id="@+id/mike"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/mike_green"
+                android:scaleType="fitCenter"
+                android:layout_weight="1"
+                android:padding="11dp"
+                android:background="@drawable/border_bottomblue"
+                ></ImageButton>
+            <ImageButton
+                android:id="@+id/signal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/signal"
+                android:scaleType="fitCenter"
+                android:layout_weight="1"
+                android:padding="13dp"
+                android:background="@drawable/border_bottomblue"
+                ></ImageButton>
+            <ImageButton
+                android:id="@+id/walk"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/walk"
+                android:scaleType="fitCenter"
+                android:layout_weight="1"
+                android:padding="9dp"
+                android:background="@drawable/border_bottomblue"
+                ></ImageButton>
+            <ImageButton
+                android:id="@+id/setting"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/setting_gray"
+                android:scaleType="fitCenter"
+                android:layout_weight="1"
+                android:padding="10dp"
+                android:background="@drawable/border_bottomblue"
+                ></ImageButton>
+        </LinearLayout>
+    <ImageButton
             android:id="@+id/btn_cctv"
             android:layout_width="55dp"
             android:layout_height="55dp"
@@ -50,18 +121,19 @@
 
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"></ImageButton>
+
         <ImageButton
             android:id="@+id/btn_police"
-            android:layout_width="55dp"
+            android:layout_width="59dp"
             android:layout_height="55dp"
             android:layout_gravity="left|top"
             android:layout_marginLeft="68dp"
             android:layout_marginTop="580dp"
-            android:background="@drawable/outline"
-            android:src="@drawable/police"
             android:adjustViewBounds="true"
+            android:background="@drawable/outline"
             android:padding="5dp"
-            android:scaleType="fitCenter"></ImageButton>
+            android:scaleType="fitCenter"
+            android:src="@drawable/police"></ImageButton>
         <ImageButton
             android:id="@+id/btn_store"
             android:layout_width="55dp"

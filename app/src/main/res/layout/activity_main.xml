@@ -8,7 +8,8 @@
     <!-- 네이버 지도 -->
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/fl">
 
         <com.naver.maps.map.MapView
             android:id="@+id/map_view"
@@ -20,22 +21,59 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|start"
-            android:layout_margin="12dp"
+            android:layout_margin="14dp"
             android:id="@+id/currentLocationButton">
         </com.naver.maps.map.widget.LocationButtonView>
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottom_menu"
+        <LinearLayout
+            android:layout_height="70dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:layout_weight="1"
             android:layout_gravity="bottom"
-
             android:background="@drawable/border_bottomblue"
-            app:itemIconTint="@color/blue"
-            app:itemTextColor="@color/bottom_navigation_item_selector"
-            app:labelVisibilityMode="unlabeled"
-            app:menu="@menu/bottom_menu" />
+            >
+            <ImageButton
+                android:id="@+id/mike"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/mike_green"
+                android:scaleType="fitCenter"
+                android:layout_weight="1"
+                android:padding="11dp"
+                android:background="@drawable/border_bottomblue"
+                ></ImageButton>
+            <ImageButton
+                android:id="@+id/signal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/signal"
+                android:scaleType="fitCenter"
+                android:layout_weight="1"
+                android:padding="13dp"
+                android:background="@drawable/border_bottomblue"
+                ></ImageButton>
+            <ImageButton
+                android:id="@+id/walk"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/walk"
+                android:scaleType="fitCenter"
+                android:layout_weight="1"
+                android:padding="9dp"
+                android:background="@drawable/border_bottomblue"
+                ></ImageButton>
+            <ImageButton
+                android:id="@+id/setting"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/setting_gray"
+                android:scaleType="fitCenter"
+                android:layout_weight="1"
+                android:padding="10dp"
+                android:background="@drawable/border_bottomblue"
+                ></ImageButton>
+        </LinearLayout>
 
         <ImageButton
             android:id="@+id/btn_cctv"

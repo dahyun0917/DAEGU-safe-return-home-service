@@ -92,11 +92,20 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="아이디 찾기 | 비밀번호 찾기 | 회원가입"
+            android:text="아이디 찾기 | 비밀번호 찾기 "
             android:textColor="@color/white"
             android:textSize="20dp"
             android:gravity="center"
             android:padding="15dp"></TextView>
+
+        <Button
+            android:id="@+id/signup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            android:background="#00FFFFFF"
+            android:text="회원가입" />
 
     </LinearLayout>
 
