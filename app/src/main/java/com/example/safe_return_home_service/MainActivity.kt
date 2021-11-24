@@ -1,7 +1,6 @@
 package com.example.safe_return_home_service
 
 import android.annotation.SuppressLint
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -10,18 +9,12 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.media.Image
-import android.media.MediaRecorder
 import android.os.Bundle
-import android.os.Environment
 import android.os.PersistableBundle
-import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -29,8 +22,6 @@ import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.util.FusedLocationSource
 import com.naver.maps.map.widget.LocationButtonView
-import java.io.IOException
-import java.util.*
 import java.util.jar.Manifest
 
 
@@ -73,14 +64,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         btn_mike.setOnClickListener{
             val intent = Intent(this,record_list ::class.java)
             startActivity(intent)
-
         }
         btn_signal.setOnClickListener{
             val intent = Intent(this,signal ::class.java)
-            startActivity(intent)
-        }
-        btn_moni.setOnClickListener {
-            val intent = Intent(this,monitoring ::class.java)
             startActivity(intent)
         }
 //        locationSource = FusedLocationSource(this,LOCATION_PERMISSION_REQUEST_CODE)
@@ -98,7 +84,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
                                             grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode != LOCATION_PERMISSION_REQUEST_CODE )
-            return
+                return
         if(locationSource.onRequestPermissionsResult(requestCode,permissions,grantResults)){
             if (!locationSource.isActivated) { // 권한 거부됨
                 naverMap.locationTrackingMode = LocationTrackingMode.None
@@ -108,7 +94,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
     }
 
     override fun onMapReady(naverMap: NaverMap) {
-        Log.d(TAG,"onMapReady")
         //맵 가져오기(from: getMapAsync)
         this.naverMap = naverMap
         //줌 범위 설정
@@ -117,10 +102,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         //지도 위치 이동
         val cameraUpdate = CameraUpdate.scrollTo(LatLng(37.497801,127.027591))
         naverMap.moveCamera(cameraUpdate)
-
         //현위치 버튼 기능
         val uiSetting = naverMap.uiSettings
         uiSetting.isLocationButtonEnabled = false
+
         currentLocationButton.map = naverMap
         locationSource= FusedLocationSource(this,LOCATION_PERMISSION_REQUEST_CODE)
         naverMap.locationSource = locationSource
@@ -156,5 +141,4 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         super.onLowMemory()
         mapView?.onLowMemory()
     }
-
 }
