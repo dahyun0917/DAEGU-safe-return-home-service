@@ -6,6 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
@@ -15,6 +19,7 @@ import android.media.MediaRecorder
 import android.os.Bundle
 import android.os.Environment
 import android.os.PersistableBundle
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -41,7 +46,7 @@ import java.util.*
 import java.util.jar.Manifest
 
 
-class monitoring : AppCompatActivity(), OnMapReadyCallback {
+class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener {
     private var LOCATION_PERMISSION_REQUEST_CODE = 1000;
     private val mapView: MapView by lazy { findViewById(R.id.map_view) }
     private lateinit var locationSource: FusedLocationSource
@@ -58,6 +63,18 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback {
     var text =URLEncoder.encode("아트메가128","utf-8")
     var apiURL = "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving?start={35.890150, 128.611087}&goal={35.882775, 128.612691}"
     private val currentLocationButton: LocationButtonView by lazy { findViewById(R.id.currentLocationButton) }
+    //센서 관리자 객체 얻기
+    private val sensorManager1 by lazy {getSystemService(Context.SENSOR_SERVICE) as SensorManager }
+
+    // 중력, 중력가속도을 기준으로 삼아서 진동, 움직임을 측정한다.
+    // 흔들림 감지할 때 기준이 되는 가해지는 힘
+    private var SHAKE_THRESHOLD_GRAVITY = 2.7F;
+    // 흔들림 감지할때 최소 0.5초를 기준으로 측정한다.
+    private var SHAKE_SLOP_TIME_MS = 500;
+    // 흔드는 횟수는 3초마다 초기화
+    private var SHAKE_COUNT_RESET_TIME_MS = 3000
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +92,6 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback {
 
         mapView!!.onCreate(savedInstanceState)
         mapView!!.getMapAsync(this)
-
 
         btn_setting.setOnClickListener {
             val intent = Intent(this, setting::class.java)
@@ -100,7 +116,6 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback {
 
         }
     }
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -143,11 +158,17 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback {
     override fun onResume() {
         super.onResume()
         mapView?.onResume()
+        sensorManager1.registerListener(
+            this,
+            sensorManager1.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+            SensorManager.SENSOR_DELAY_NORMAL
+        )
     }
 
     override fun onPause() {
         super.onPause()
         mapView?.onPause()
+        sensorManager1.unregisterListener(this)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -168,5 +189,15 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback {
     override fun onLowMemory() {
         super.onLowMemory()
         mapView?.onLowMemory()
+    }
+
+    override fun onSensorChanged(event: SensorEvent?) {
+        event?.let{
+            Log.d("monitoring","x:${event.values[0]},y:${event.values[1]},z:${event.values[2]}")
+            //[0] x축값, [1] y 축값, [2] z축
+        }
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
     }
 }

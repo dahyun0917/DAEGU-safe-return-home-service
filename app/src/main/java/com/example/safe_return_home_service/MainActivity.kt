@@ -69,6 +69,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
             val intent = Intent(this,signal ::class.java)
             startActivity(intent)
         }
+        btn_moni.setOnClickListener {
+            val intent = Intent(this,monitoring ::class.java)
+            startActivity(intent)
+        }
 //        locationSource = FusedLocationSource(this,LOCATION_PERMISSION_REQUEST_CODE)
 //        naverMap.locationSource = locationSource
 //        var fragmentManager : FragmentManager = supportFragmentManager;
