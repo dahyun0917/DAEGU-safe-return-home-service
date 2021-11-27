@@ -35,7 +35,6 @@ class signal: AppCompatActivity(){
     lateinit var btn_cancle : Button
     var clientId = "ooywnneloz"
     var clientSecret = "4CXBAfjeIwW4pAxpecj9lC1v5r5D0vF3UJcSj8Hk"
-    lateinit var requestHeaders : HashMap<String,String>
 
     var time = 0
 
@@ -48,7 +47,7 @@ class signal: AppCompatActivity(){
     var REQUEST_CODE_LOCATION = 2
 
     //위도,경도 바꾸기 위해
-    val geocoder = Geocoder(this)
+    //val geocoder = Geocoder(this)
 
     private val multiplePermissionsCode = 100
     private val requiredPermissions = arrayOf(
@@ -63,33 +62,6 @@ class signal: AppCompatActivity(){
         setContentView(R.layout.signal)
         btn_cancle = findViewById(R.id.btn_cancle)
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-        /*val permissions=ArrayList<String>()
-        if ((ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_SMS) +
-                    ContextCompat.checkSelfPermission(this, android.Manifest.permission.SEND_SMS))
-            != PackageManager.PERMISSION_GRANTED) {
-
-            permissions.add(android.Manifest.permission.READ_SMS)
-            permissions.add(android.Manifest.permission.SEND_SMS)
-            /*val permissions = arrayOf(android.Manifest.permission.READ_SMS,
-                android.Manifest.permission.SEND_SMS)
-            ActivityCompat.requestPermissions(this, permissions,0)*/
-        }
-        else if(ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            permissions.add(android.Manifest.permission.RECORD_AUDIO)
-            permissions.add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            permissions.add(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-            //Permission is not granted
-            /*val permissionss = arrayOf(android.Manifest.permission.RECORD_AUDIO,
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE)
-            ActivityCompat.requestPermissions(this, permissionss,0)*/
-        }
-        if(permissions.isNotEmpty()){
-            val array = arrayOfNulls<String>(permissions.size)
-            ActivityCompat.requestPermissions(this, permissions.toArray(array), multiplePermissionsCode)
-        }*/
 
         var rejectedPermissionList = ArrayList<String>()
         for(permission in requiredPermissions){
@@ -110,19 +82,6 @@ class signal: AppCompatActivity(){
             startRecording()
         }
 
-
-
-        /*if (ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            //Permission is not granted
-            val permissions = arrayOf(android.Manifest.permission.RECORD_AUDIO,
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE)
-            ActivityCompat.requestPermissions(this, permissions,0)
-            startRecording()
-        } else {
-            startRecording()
-        }*/
         btn_cancle.setOnClickListener {
             timerTask?.cancel();
             count=1
@@ -130,8 +89,8 @@ class signal: AppCompatActivity(){
             val intent = Intent(this,MainActivity ::class.java)
             startActivity(intent)
         }
-        requestHeaders.put("X-NCP-APIGW-API-KEY-ID:",clientId)
-        requestHeaders.put("X-NCP-APIGW-API-KEY:",clientSecret)
+//        requestHeaders.put("X-NCP-APIGW-API-KEY-ID:",clientId)
+ //       requestHeaders.put("X-NCP-APIGW-API-KEY:",clientSecret)
 
 
     }
@@ -214,35 +173,34 @@ class signal: AppCompatActivity(){
     fun SendSMS(){
         //var phoneNo = "01025335441";
         //var sms = "안녕";
-        var latitude : Double
-        var longitude : Double
+        var latitude : Double = 0.0
+        var longitude : Double = 0.0
         var userLocation = getMyLocation()!!
         var list : List<Address>?=null
         if(userLocation != null){
-            latitude = 35.890043//userLocation.latitude
-            longitude = 128.611324//userLocation.longitude
+            latitude = userLocation.latitude
+            longitude = userLocation.longitude
             Toast.makeText(this@signal, "$latitude $longitude", Toast.LENGTH_LONG).show()
-            var apiURL = "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=$latitude ,$longitude"
-            try{
-                list= geocoder.getFromLocation(
-                    latitude!!,
-                    longitude!!,
-                    1
-                )
-            }catch (e : IOException){
-                e.printStackTrace()
-                Toast.makeText(this@signal, "주소를 가져올 수 없습니다.", Toast.LENGTH_LONG).show()
-            }
-
-            if(list != null){
-                if(list.size !=0)
-                Log.d("현재 주소",list[0].getAddressLine(0))
-                else {
-                    Toast.makeText(this@signal, "해당되는 주소 정보는 없습니다.", Toast.LENGTH_SHORT).show()
-
-                }
-            }
-
+//            var apiURL = "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=$latitude ,$longitude"
+//            try{
+//                list= geocoder.getFromLocation(
+//                    latitude!!,
+//                    longitude!!,
+//                    1
+//                )
+//            }catch (e : IOException){
+//                e.printStackTrace()
+//                Toast.makeText(this@signal, "주소를 가져올 수 없습니다.", Toast.LENGTH_LONG).show()
+//            }
+//
+//            if(list != null){
+//                if(list.size !=0)
+//                Log.d("현재 주소",list[0].getAddressLine(0))
+//                else {
+//                    Toast.makeText(this@signal, "해당되는 주소 정보는 없습니다.", Toast.LENGTH_SHORT).show()
+//
+//                }
+            //}
         }
 
         sms = SmsManager.getDefault()
