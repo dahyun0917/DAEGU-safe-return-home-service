@@ -36,9 +36,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scaleType="fitCenter"
-            android:src="@drawable/check"
+            android:src="@drawable/set"
             android:layout_weight="3"
-            android:background="@drawable/border_green"
+            android:background="@color/dark"
             android:layout_marginRight="20dp"
             android:layout_marginBottom="14dp"
             android:layout_marginLeft="20dp"
@@ -51,9 +51,11 @@
         android:layout_weight="6"
         >
         <ListView
-            android:id="@+id/rclist"
+            android:id="@+id/recordListView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             ></ListView>
     </LinearLayout>
     <LinearLayout
