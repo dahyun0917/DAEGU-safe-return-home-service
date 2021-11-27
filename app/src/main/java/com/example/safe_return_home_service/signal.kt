@@ -22,6 +22,7 @@ import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.*
+import java.io.File
 import java.io.IOException
 import java.lang.reflect.Array.get
 import java.security.AccessController.getContext
@@ -135,8 +136,12 @@ class signal: AppCompatActivity(){
     }
     private fun startRecording(){
         //config and create MediaRecorder Object
+        var file= File(Environment.getExternalStorageDirectory().path+"/Download/"+"safe_return_home/")
+        if(!file.exists()){
+            file.mkdirs()
+        }
         val fileName: String = Date().getTime().toString() + ".mp3"
-        output = Environment.getExternalStorageDirectory().absolutePath + "/Download/" + fileName //내장메모리 밑에 위치
+        output = Environment.getExternalStorageDirectory().absolutePath + "/Download/"+"safe_return_home/" + fileName//내장메모리 밑에 위치
         mediaRecorder = MediaRecorder()
         mediaRecorder?.setAudioSource((MediaRecorder.AudioSource.MIC))
         mediaRecorder?.setOutputFormat((MediaRecorder.OutputFormat.MPEG_4))
@@ -181,7 +186,7 @@ class signal: AppCompatActivity(){
         time=0
         timerTask = kotlin.concurrent.timer(period = 1000,initialDelay = 1000) { //반복주기는 peroid 프로퍼티로 설정, 단위는 1000분의 1초 (period = 1000, 1초)
             time++ // period=10으로 0.01초마다 time를 1씩 증가하게 됩니다
-            if (time == 6) {
+            if (time == 7200) {
                 timerTask?.cancel();
                 //Toast.makeText(this@signal, "시간초과로 중지 되었습니다.", Toast.LENGTH_SHORT).show()
                 stopRecording()
