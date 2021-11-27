@@ -20,11 +20,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
+import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.*
 import java.io.IOException
 import java.lang.reflect.Array.get
 import java.security.AccessController.getContext
 import java.util.*
 import kotlin.collections.HashMap
+import com.google.firebase.firestore.DocumentSnapshot as DocumentSnapshot
 
 
 class signal: AppCompatActivity(){
@@ -33,22 +36,25 @@ class signal: AppCompatActivity(){
     private var state: Boolean = false
 
     lateinit var btn_cancle : Button
-    var clientId = "ooywnneloz"
-    var clientSecret = "4CXBAfjeIwW4pAxpecj9lC1v5r5D0vF3UJcSj8Hk"
 
+    var fbFirestore : FirebaseFirestore?=null
     var time = 0
 
     var count=0
     private var timerTask: Timer? = null
-
+    var latitude : Double = 0.0
+    var longitude : Double = 0.0
     lateinit var sms : SmsManager
     //현재위치 가져오기 위함
     lateinit var locationManager : LocationManager
     var REQUEST_CODE_LOCATION = 2
-
     //위도,경도 바꾸기 위해
-    //val geocoder = Geocoder(this)
-
+    val geocoder = Geocoder(this, Locale.getDefault())
+    var nokphone : String? = null
+    lateinit var lat: String
+    lateinit var lon : String
+    var name : String? = null
+    var list : List<Address>?=null
     private val multiplePermissionsCode = 100
     private val requiredPermissions = arrayOf(
         android.Manifest.permission.SEND_SMS,
@@ -62,6 +68,22 @@ class signal: AppCompatActivity(){
         setContentView(R.layout.signal)
         btn_cancle = findViewById(R.id.btn_cancle)
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        fbFirestore = FirebaseFirestore.getInstance()
+        fbFirestore!!.collection("information").document("${MySharedPreferences.getUserId(this)}")
+            .get()
+            .addOnSuccessListener { document ->
+                nokphone = document["nokphone"] as String
+                name = document["name"] as String
+                sms = SmsManager.getDefault()
+                sms.sendTextMessage(
+                "$nokphone",
+                null,
+                "현재 $name 님이 $lat $lon 에서 신고를 하였습니다.",
+                null,
+                null
+        )
+                Toast.makeText(this@signal, "문자발송.", Toast.LENGTH_SHORT).show()
+            }
 
         var rejectedPermissionList = ArrayList<String>()
         for(permission in requiredPermissions){
@@ -89,8 +111,6 @@ class signal: AppCompatActivity(){
             val intent = Intent(this,MainActivity ::class.java)
             startActivity(intent)
         }
-//        requestHeaders.put("X-NCP-APIGW-API-KEY-ID:",clientId)
- //       requestHeaders.put("X-NCP-APIGW-API-KEY:",clientSecret)
 
 
     }
@@ -110,8 +130,6 @@ class signal: AppCompatActivity(){
         var locationProvider:String = LocationManager.GPS_PROVIDER
         currentLocation = locationManager.getLastKnownLocation(locationProvider)
         if(currentLocation != null){
-            var lng = currentLocation.longitude
-            var lat = currentLocation.latitude
         }
         return currentLocation
     }
@@ -170,49 +188,48 @@ class signal: AppCompatActivity(){
             }
         }
     }
+    fun changeLocation(){
+
+    }
     fun SendSMS(){
-        //var phoneNo = "01025335441";
-        //var sms = "안녕";
-        var latitude : Double = 0.0
-        var longitude : Double = 0.0
-        var userLocation = getMyLocation()!!
-        var list : List<Address>?=null
-        if(userLocation != null){
-            latitude = userLocation.latitude
-            longitude = userLocation.longitude
-            Toast.makeText(this@signal, "$latitude $longitude", Toast.LENGTH_LONG).show()
-//            var apiURL = "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=$latitude ,$longitude"
-//            try{
-//                list= geocoder.getFromLocation(
+        var userLocation= getMyLocation()
+//        if(userLocation != null) {
+            latitude = 37.57204210851489//userLocation.latitude
+            longitude = 128.6090332//userLocation.longitude
+            Toast.makeText(this@signal, "$latitude $longitude", Toast.LENGTH_SHORT).show()
+//            try {
+//                list = geocoder.getFromLocation(
 //                    latitude!!,
 //                    longitude!!,
 //                    1
 //                )
-//            }catch (e : IOException){
+//            } catch (e: IOException) {
 //                e.printStackTrace()
 //                Toast.makeText(this@signal, "주소를 가져올 수 없습니다.", Toast.LENGTH_LONG).show()
+//            } catch (illegalArgumentException: IllegalArgumentException) {
+//                Toast.makeText(this, "잘못된 GPS 좌표", Toast.LENGTH_SHORT).show()
 //            }
-//
-//            if(list != null){
-//                if(list.size !=0)
-//                Log.d("현재 주소",list[0].getAddressLine(0))
-//                else {
-//                    Toast.makeText(this@signal, "해당되는 주소 정보는 없습니다.", Toast.LENGTH_SHORT).show()
-//
+//            if(list!=null){
+//                if(list?.size != null){
+//                    Toast.makeText(this@signal,"$list", Toast.LENGTH_LONG).show()
 //                }
-            //}
-        }
+//                else{
+//                    Toast.makeText(this@signal,"오", Toast.LENGTH_LONG).show()
+//                }
+//            }
 
-        sms = SmsManager.getDefault()
-        sms.sendTextMessage(
-            "01025335441",
-            null,
-            "hi",
-            null,
-            null
-        )
-        Toast.makeText(this@signal, "문자발송.", Toast.LENGTH_SHORT).show()
+            lat = latitude.toString()
+            lon = longitude.toString()
+            var LatLon = location_data()
+            LatLon.lat = lat
+            LatLon.lng = lon
 
+            fbFirestore?.collection("reported info")?.document()?.set(LatLon)
+            sms = SmsManager.getDefault()
+ //       }
 
     }
 }
+
+
+
