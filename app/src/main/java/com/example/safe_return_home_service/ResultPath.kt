@@ -11,7 +11,7 @@ data class ResultPath(
     val code : Int
 )
 data class Result_trackoption(
-    val traoptiomal : List<Result_path>
+    val traoptimal : List<Result_path>
 )
 data class Result_path(
     val summary : Result_distance,

@@ -10,10 +10,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.location.Geocoder
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
+import android.location.*
 import android.media.Image
 import android.media.MediaRecorder
 import android.os.Bundle
@@ -31,9 +28,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
+import com.naver.maps.map.overlay.InfoWindow
+import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.overlay.PathOverlay
 import com.naver.maps.map.util.FusedLocationSource
 import com.naver.maps.map.widget.LocationButtonView
+import org.json.JSONArray
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -52,6 +53,7 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
     private val mapView: MapView by lazy { findViewById(R.id.map_view) }
     private lateinit var locationSource: FusedLocationSource
     private lateinit var naverMap: NaverMap
+    private lateinit var geocoder:Geocoder
     lateinit var btn_mike: ImageButton
     lateinit var btn_setting: ImageButton
     lateinit var btn_signal: ImageButton
@@ -59,6 +61,15 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
     lateinit var btn_store: ImageButton
     lateinit var btn_police: ImageButton
     lateinit var btn_moni: ImageButton
+    lateinit var locationManager: LocationManager
+    var police=0
+    var policeArray:ArrayList<Marker> = ArrayList()
+    var storeArray:ArrayList<Marker> = ArrayList()
+    var cctvArray:ArrayList<Marker> = ArrayList()
+    var store=0
+    var cctv=0
+    val infoWindow = InfoWindow()
+
     var APIKEY_ID = "j01tozred3"
     var APIKEY = "qMNcbT8wDWV2X56NmQCHYIsFxeNWPvXvmZUznXHo"
     var text =URLEncoder.encode("아트메가128","utf-8")
@@ -76,12 +87,21 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
     private var SHAKE_COUNT_RESET_TIME_MS = 3000
     //private lateinit var db:FirebaseFirestore
 
+    var REQUEST_CODE_LOCATION = 2
+
+    private val locationManager1 by lazy {
+        getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.monitoring)
 
-        var db= FirebaseFirestore.getInstance() //firebase
+        var db = FirebaseFirestore.getInstance() //firebase
+        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        //geocoder
+        geocoder=Geocoder(this)
 
         btn_cctv = findViewById<ImageButton>(R.id.btn_cctv)
         btn_store = findViewById<ImageButton>(R.id.btn_store)
@@ -97,15 +117,17 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
         mapView!!.onCreate(savedInstanceState)
         mapView!!.getMapAsync(this)
 
+
         btn_setting.setOnClickListener {
             val intent = Intent(this, setting::class.java)
             startActivity(intent)
         }
+
         btn_mike.setOnClickListener {
             val intent = Intent(this, record_list::class.java)
             startActivity(intent)
-
         }
+
         btn_signal.setOnClickListener {
             val intent = Intent(this, signal::class.java)
             startActivity(intent)
@@ -115,30 +137,247 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
             startActivity(intent)
         }
 
-        btn_cctv.setOnClickListener {
-            Toast.makeText(this,"클릭함" ,Toast.LENGTH_SHORT).show()
-            db.collection("cctv")
-                .get()
-                .addOnSuccessListener{ result->
-                    Toast.makeText(this,"읽어오기 완료" ,Toast.LENGTH_SHORT).show()
-                    for(document in result){
-                        Log.d("cctv","지역 : ${document["지역"]}, latitude: ${document["latitude"]}, longitude: ${document["longitude"]}")
+        btn_police.setOnClickListener {
+            if (police == 0) {
+                val jsonString = assets.open("jsons/emergency.json").reader().readText()
+
+                var jsonArray = JSONArray(jsonString)
+
+                for (i in 0 until jsonArray.length()) {
+                    val marker = Marker()
+                    var jo = jsonArray.getJSONObject(i)
+                    var local = jo.getString("지역")
+                    var name = jo.getString("name")
+                    var location = jo.getString("location")
+                    var latitude = jo.getDouble("latitude")
+                    var longitude = jo.getDouble("longitude")
+                    marker.icon = OverlayImage.fromResource(R.drawable.police_station)
+                    marker.width = 130
+                    marker.height = 130
+                    marker.tag = "$name\n위치 : $location"
+                    marker.setOnClickListener {
+                        infoWindow.open(marker)
+                        true
                     }
-                }.addOnFailureListener { exception ->
-                    // 실패할 경우
-                    Toast.makeText(this,"읽어오기 실패" ,Toast.LENGTH_SHORT).show()
-                    Log.w("monitoring", "Error getting documents: $exception")
+                    marker.position = LatLng(latitude, longitude)
+                    policeArray.add(marker)
+                    marker.map = naverMap
                 }
+
+                police = 1
+            } else {
+                for (marker in policeArray) {
+                    marker.map = null
+                }
+                policeArray.clear()
+                police = 0
+            }
+
+        }
+        btn_store.setOnClickListener {
+            if (store == 0) {
+                val jsonString = assets.open("jsons/convenience.json").reader().readText()
+
+                var jsonArray = JSONArray(jsonString)
+
+                for (i in 0 until jsonArray.length()) {
+                    val marker = Marker()
+                    var jo = jsonArray.getJSONObject(i)
+                    var name = jo.getString("편의점 이름")
+                    var location = jo.getString("위치")
+                    var latitude = jo.getDouble("latitude")
+                    var longitude = jo.getDouble("longitude")
+                    marker.icon = OverlayImage.fromResource(R.drawable.store_pin2)
+                    marker.width = 130
+                    marker.height = 130
+                    marker.tag = "$name\n위치 : $location"
+                    marker.setOnClickListener {
+                        infoWindow.open(marker)
+                        true
+                    }
+                    marker.position = LatLng(latitude, longitude)
+                    storeArray.add(marker)
+                    marker.map = naverMap
+                }
+                store = 1
+            } else {
+                for (marker in storeArray) {
+                    marker.map = null
+                }
+                storeArray.clear()
+                store = 0
+            }
+
+        }
+        infoWindow.adapter = object : InfoWindow.DefaultTextAdapter(applicationContext) {
+            override fun getText(infoWindow: InfoWindow): CharSequence {
+                return infoWindow.marker?.tag as CharSequence? ?: ""
+            }
+        }
+
+        btn_cctv.setOnClickListener {
+            if (cctv == 0) {
+                val jsonString = assets.open("jsons/cctv.json").reader().readText()
+
+                var jsonArray = JSONArray(jsonString)
+
+                for (i in 0 until jsonArray.length()) {
+                    val marker = Marker()
+                    var jo = jsonArray.getJSONObject(i)
+                    var local = jo.getString("지역")
+                    var latitude = jo.getDouble("latitude")
+                    var longitude = jo.getDouble("longitude")
+                    marker.icon = OverlayImage.fromResource(R.drawable.cctv_pin)
+                    marker.width = 40
+                    marker.height = 40
+                    marker.position = LatLng(latitude, longitude)
+                    cctvArray.add(marker)
+                    marker.map = naverMap
+                }
+                cctv = 1
+            } else {
+                for (marker in cctvArray) {
+                    marker.map = null
+                }
+                cctvArray.clear()
+                cctv = 0
+            }
         }
 
         btn_load.setOnClickListener {
+
+
             var startlocation = edit_start.text.toString();
             var arrivelocation = edit_arrive.text.toString();
+            var list : List<Address>?=null
 
+            if (arrivelocation==null||arrivelocation=="")  {
+                Toast.makeText(this,"도착지를 입력해주세요!",Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            var current=getMyLocation()!!
+
+            if(current!=null){
+                Log.d("location","위도 : ${current.latitude}, 경도 : ${current.longitude}")
+            }
+            val retrofit =
+                Retrofit.Builder().baseUrl("https://naveropenapi.apigw.ntruss.com/map-direction/")
+                    .addConverterFactory(GsonConverterFactory.create()).build()
+            val api = retrofit.create(NaverAPI::class.java)
+
+            var start_long=0.0; var start_lat=0.0
+            var goal_long=0.0; var goal_lat=0.0
+
+            try{
+                list=geocoder.getFromLocationName(arrivelocation,1)
+                var mlat = list?.get(0)?.latitude
+                var mlng = list?.get(0)?.longitude
+                if (mlat != null&&mlng!=null) {
+                    goal_lat=mlat.toDouble()
+                    goal_long=mlng.toDouble()
+                }
+            }
+            catch(e:IOException){
+                e.printStackTrace()
+                Toast.makeText(this@monitoring, "목적지 주소를 가져올 수 없습니다.", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            if (startlocation==""||startlocation==null) {
+                if(current!=null){
+                    start_long=current.longitude
+                    start_lat=current.latitude
+                }
+                else{
+                    Toast.makeText(this@monitoring, "현재 위치를 가져올 수 없습니다.", Toast.LENGTH_LONG).show()
+                    return@setOnClickListener
+                }
+            }
+            else{
+                try{
+                    list=geocoder.getFromLocationName(startlocation,1)
+                    var mlat = list?.get(0)?.latitude
+                    var mlng = list?.get(0)?.longitude
+                    if (mlat != null&&mlng!=null) {
+                        start_lat=mlat.toDouble()
+                        start_long=mlng.toDouble()
+                    }
+                }
+                catch(e:IOException){
+                    e.printStackTrace()
+                    Toast.makeText(this@monitoring, "출발지 주소를 가져올 수 없습니다.", Toast.LENGTH_LONG).show()
+                    return@setOnClickListener
+                }
+            }
+
+            //길찾기 시작
+            var callgetPath =
+                api.getPath(APIKEY_ID, APIKEY, "${start_long}, ${start_lat}", "${goal_long}, ${goal_lat}")
+
+
+            callgetPath.enqueue(object : Callback<ResultPath> {
+                override fun onResponse(
+                    call: Call<ResultPath>,
+                    response: Response<ResultPath>
+                ) {
+                    var path_cords_list = response.body()?.route?.traoptimal
+                    //경로 그리기 응답바디가 List<List<Double>> 이라서 2중 for문 썼음
+                    val path = PathOverlay()
+                    //MutableList에 add 기능 쓰기 위해 더미 원소 하나 넣어둠
+                    val path_container: MutableList<LatLng>? = mutableListOf(LatLng(0.1, 0.1))
+                    for (path_cords in path_cords_list!!) {
+                        for (path_cords_xy in path_cords?.path) {
+                            //구한 경로를 하나씩 path_container에 추가해줌
+                            path_container?.add(LatLng(path_cords_xy[1], path_cords_xy[0]))
+                        }
+                    }
+                    //더미원소 드랍후 path.coords에 path들을 넣어줌.
+                    path.coords = path_container?.drop(1)!!
+                    path.color = Color.RED
+                    path.map = naverMap
+
+                    //경로 시작점으로 화면 이동
+                    if (path.coords != null) {
+                        val cameraUpdate = CameraUpdate.scrollTo(path.coords[0]!!)
+                            .animate(CameraAnimation.Fly, 3000)
+                        naverMap!!.moveCamera(cameraUpdate)
+
+                        Toast.makeText(this@monitoring, "경로 안내가 시작됩니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<ResultPath>, t: Throwable) {
+                    TODO("Not yet implemented")
+                }
+
+
+            })
         }
-
-
     }
+
+    private fun getMyLocation(): Location? {
+        var currentLocation : Location? = null
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+        }
+        var locationProvider:String = LocationManager.GPS_PROVIDER
+        currentLocation = locationManager.getLastKnownLocation(locationProvider)
+        if(currentLocation != null){
+            var lng = currentLocation.longitude
+            var lat = currentLocation.latitude
+            Toast.makeText(this,"위도 : $lat , 경도 : $lng",Toast.LENGTH_LONG).show()
+            Log.d("location","위도 : $lat , 경도 : $lng")
+        }
+        return currentLocation
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -162,7 +401,7 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
         naverMap.maxZoom = 18.0
         naverMap.minZoom = 10.0
         //지도 위치 이동
-        val cameraUpdate = CameraUpdate.scrollTo(LatLng(37.497801, 127.027591))
+        val cameraUpdate = CameraUpdate.scrollTo(LatLng(35.8874092, 128.6127373))
         naverMap.moveCamera(cameraUpdate)
         //현위치 버튼 기능
         val uiSetting = naverMap.uiSettings
@@ -171,6 +410,44 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
         currentLocationButton.map = naverMap
         locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
         naverMap.locationSource = locationSource
+
+        naverMap.setOnMapClickListener { pointF, latLng ->
+            infoWindow.close()
+        }
+
+        //위험도 표시
+        val jsonString=assets.open("jsons/danger.json").reader().readText()
+
+        var jsonArray = JSONArray(jsonString)
+
+        for (i in 0 until jsonArray.length() ){
+            val marker= Marker()
+            var jo = jsonArray.getJSONObject(i)
+            var dong=jo.getString("dong")
+            var latitude=jo.getDouble("latitude")
+            var longitude=jo.getDouble("longtitude")
+            var score=jo.getDouble("score")
+
+            if(score>=2.5){
+                marker.icon= OverlayImage.fromResource(R.drawable.danger4)
+            }
+            else if(score>=2){
+                marker.icon= OverlayImage.fromResource(R.drawable.danger3)
+            }
+            else if(score>=1.5){
+                marker.icon= OverlayImage.fromResource(R.drawable.danger2)
+            }
+            else{
+                marker.icon= OverlayImage.fromResource(R.drawable.danger1)
+            }
+
+            marker.width=30
+            marker.height=30
+            marker.position=LatLng(latitude,longitude)
+            //cctvArray.add(marker)
+            marker.map=naverMap
+        }
+
     }
 
     override fun onStart() {
@@ -216,7 +493,7 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
 
     override fun onSensorChanged(event: SensorEvent?) {
         event?.let{
-            Log.d("monitoring","x:${event.values[0]},y:${event.values[1]},z:${event.values[2]}")
+//            Log.d("monitoring","x:${event.values[0]},y:${event.values[1]},z:${event.values[2]}")
             //[0] x축값, [1] y 축값, [2] z축
         }
     }
