@@ -1,26 +1,9 @@
 package com.example.safe_return_home_service
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.content.res.AssetManager
-import android.location.Geocoder
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
-import android.media.Image
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.util.Log
-import android.view.View
 import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.PermissionChecker
-import androidx.fragment.app.FragmentManager
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
@@ -30,11 +13,6 @@ import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.naver.maps.map.widget.LocationButtonView
 import org.json.JSONArray
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStream
-import java.io.InputStreamReader
-import java.util.jar.Manifest
 
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback{
@@ -69,7 +47,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         //firestore
         var db= FirebaseFirestore.getInstance() //firebase
 
-
         //네이버 지도
         //mapView = findViewById<View>(R.id.map_view) as MapView
         btn_cctv = findViewById<ImageButton>(R.id.btn_cctv)
@@ -81,6 +58,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         btn_moni = findViewById(R.id.walk)
         mapView!!.onCreate(savedInstanceState)
         mapView!!.getMapAsync(this)
+
+
 
         btn_setting.setOnClickListener{
             val intent = Intent(this,setting ::class.java)
@@ -97,11 +76,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         btn_moni.setOnClickListener {
             val intent = Intent(this,monitoring ::class.java)
             startActivity(intent)
-        }
-        btn_police.setOnClickListener {
-            if(police==0){
-
-            }
         }
 
         btn_police.setOnClickListener {
@@ -184,8 +158,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
             }
         }
 
-
-
         btn_cctv.setOnClickListener {
             if(cctv==0){
                 val jsonString=assets.open("jsons/cctv.json").reader().readText()
@@ -260,6 +232,40 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         naverMap.setOnMapClickListener { pointF, latLng ->
             infoWindow.close()
         }
+
+        //위험도 표시
+        val jsonString=assets.open("jsons/danger.json").reader().readText()
+
+        var jsonArray = JSONArray(jsonString)
+
+        for (i in 0 until jsonArray.length() ){
+            val marker= Marker()
+            var jo = jsonArray.getJSONObject(i)
+            var dong=jo.getString("dong")
+            var latitude=jo.getDouble("latitude")
+            var longitude=jo.getDouble("longtitude")
+            var score=jo.getDouble("score")
+
+            if(score>=2.5){
+                marker.icon= OverlayImage.fromResource(R.drawable.danger4)
+            }
+            else if(score>=2){
+                marker.icon= OverlayImage.fromResource(R.drawable.danger3)
+            }
+            else if(score>=1.5){
+                marker.icon= OverlayImage.fromResource(R.drawable.danger2)
+            }
+            else{
+                marker.icon= OverlayImage.fromResource(R.drawable.danger1)
+            }
+
+            marker.width=30
+            marker.height=30
+            marker.position=LatLng(latitude,longitude)
+            //cctvArray.add(marker)
+            marker.map=naverMap
+        }
+
     }
 
     override fun onStart(){
