@@ -61,6 +61,7 @@ class login: AppCompatActivity() {
         btn_log.setOnClickListener {
             if(idEditText.text.isNullOrBlank() || passwordEditText.text.isNullOrBlank()) {
                 Toast.makeText(this, "아이디와 비밀번호를 확인하세요", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this, "$s", Toast.LENGTH_SHORT).show()
             }
             else if(count==1){
                 MySharedPreferences.setUserId(this, idEditText.text.toString())
