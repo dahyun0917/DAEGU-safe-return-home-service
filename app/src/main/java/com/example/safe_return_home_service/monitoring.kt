@@ -73,7 +73,8 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
     var APIKEY_ID = "j01tozred3"
     var APIKEY = "qMNcbT8wDWV2X56NmQCHYIsFxeNWPvXvmZUznXHo"
     var text =URLEncoder.encode("아트메가128","utf-8")
-    var apiURL = "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving?start={35.890150, 128.611087}&goal={35.882775, 128.612691}"
+    //var apiURL = "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving?start={35.890150, 128.611087}&goal={35.882775, 128.612691}"
+
     private val currentLocationButton: LocationButtonView by lazy { findViewById(R.id.currentLocationButton) }
     //센서 관리자 객체 얻기
     private val sensorManager1 by lazy {getSystemService(Context.SENSOR_SERVICE) as SensorManager }
@@ -86,6 +87,7 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
     // 흔드는 횟수는 3초마다 초기화
     private var SHAKE_COUNT_RESET_TIME_MS = 3000
     //private lateinit var db:FirebaseFirestore
+    var now_lat=0.0;var now_long=0.0
 
     var REQUEST_CODE_LOCATION = 2
 
@@ -251,15 +253,17 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
             var arrivelocation = edit_arrive.text.toString();
             var list : List<Address>?=null
 
+            Toast.makeText(this, "${now_lat}, ${now_long}", Toast.LENGTH_SHORT).show()
+
+
             if (arrivelocation==null||arrivelocation=="")  {
                 Toast.makeText(this,"도착지를 입력해주세요!",Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
-            var current=getMyLocation()!!
 
-            if(current!=null){
-                Log.d("location","위도 : ${current.latitude}, 경도 : ${current.longitude}")
-            }
+//            var current=getMyLocation()!!
+
+            Log.d("location","위도 : ${now_lat}, 경도 : ${now_long}")
             val retrofit =
                 Retrofit.Builder().baseUrl("https://naveropenapi.apigw.ntruss.com/map-direction/")
                     .addConverterFactory(GsonConverterFactory.create()).build()
@@ -284,9 +288,9 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
             }
 
             if (startlocation==""||startlocation==null) {
-                if(current!=null){
-                    start_long=current.longitude
-                    start_lat=current.latitude
+                if(now_long!=0.0&&now_lat!=0.0){
+                    start_long=now_long
+                    start_lat=now_lat
                 }
                 else{
                     Toast.makeText(this@monitoring, "현재 위치를 가져올 수 없습니다.", Toast.LENGTH_LONG).show()
@@ -355,28 +359,6 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
         }
     }
 
-    private fun getMyLocation(): Location? {
-        var currentLocation : Location? = null
-
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-        }
-        var locationProvider:String = LocationManager.GPS_PROVIDER
-        currentLocation = locationManager.getLastKnownLocation(locationProvider)
-        if(currentLocation != null){
-            var lng = currentLocation.longitude
-            var lat = currentLocation.latitude
-            Toast.makeText(this,"위도 : $lat , 경도 : $lng",Toast.LENGTH_LONG).show()
-            Log.d("location","위도 : $lat , 경도 : $lng")
-        }
-        return currentLocation
-    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -413,6 +395,13 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
 
         naverMap.setOnMapClickListener { pointF, latLng ->
             infoWindow.close()
+        }
+
+        naverMap.addOnLocationChangeListener { location ->
+            now_lat=location.latitude;now_long=location.longitude;
+
+            //Toast.makeText(this, "${location.latitude}, ${location.longitude}",
+            //    Toast.LENGTH_SHORT).show()
         }
 
         //위험도 표시
