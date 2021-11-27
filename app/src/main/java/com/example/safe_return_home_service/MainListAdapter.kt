@@ -4,27 +4,26 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.*
 import org.w3c.dom.Text
 
 
 class MainListAdapter(val context: Context, val recordlist:ArrayList<record>): BaseAdapter() {
+
     override fun getView(p0: Int, p1: View?, p2: ViewGroup?): View {
         /*xml파일의 View와 데이터를 연결*/
         val view: View = LayoutInflater.from(context).inflate(R.layout.information,null)
-        val recordPhoto = view.findViewById<ImageView>(R.id.recordPhoto)
+        val recordPhoto = view.findViewById<ImageButton>(R.id.recordPhoto)
         val recordName = view.findViewById<TextView>(R.id.recordName)
         val recordTime = view.findViewById<TextView>(R.id.recordTime)
-        val recordprog = view.findViewById<ProgressBar>(R.id.pbMP3)
+
 
         val record = recordlist[p0]
         val resourceId = context.resources.getIdentifier(record.photo, "drawable",context.packageName)
         recordPhoto.setImageResource(resourceId)
         recordName.text = record.name
         recordTime.text = record.time
+        //recordPhoto?.setOnClickListener(ButtonOnClickListener())
 
         return view
     }
@@ -45,3 +44,16 @@ class MainListAdapter(val context: Context, val recordlist:ArrayList<record>): B
     }
 
 }
+
+/*class ButtonOnClickListener:View.OnClickListener{
+    override fun onClick(p0: View?) {
+        var setimage=0
+        if(!setimage){
+
+            recordPhoto.setImageResource()
+            setimage=1
+        }
+
+    }
+
+}*/

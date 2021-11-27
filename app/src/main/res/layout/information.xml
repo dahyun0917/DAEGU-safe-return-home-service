@@ -6,17 +6,19 @@
     android:layout_margin="10dp"
     android:padding="10dp"
     android:background="@drawable/underline_dotted"
+    android:descendantFocusability="blocksDescendants"
     >
 
 
 
-    <ImageView
+    <ImageButton
         android:id="@+id/recordPhoto"
         android:layout_width="match_parent"
         android:layout_height="54dp"
         android:layout_weight="4"
         android:scaleType="fitCenter"
-        android:src="@drawable/play"></ImageView>
+        android:background="@color/dark"
+        android:src="@drawable/play"></ImageButton>
 
 
 
@@ -42,27 +44,26 @@
                 android:textSize="20dp"
                 android:textColor="@color/white"></TextView>
 
-            <TextView
-                android:id="@+id/recordTime"
+            <!--<TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:gravity="top|center"
-                android:text="00:10:21"
-                android:textColor="@color/white"
+                android:gravity="top|right"
+                android:text="녹음된 위치 : 경대로 7길 37"
                 android:layout_marginTop="5dp"
-                android:textSize="10dp"></TextView>
+                android:textSize="10dp"></TextView>-->
         </LinearLayout>
 
 
 
-        <SeekBar
-            android:id="@+id/pbMP3"
+        <TextView
+            android:id="@+id/recordTime"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:progressDrawable="@drawable/seekbar_seekbar1"
-            android:thumb="@drawable/seekbar_seekbar1_thumb"
-            ></SeekBar>
+            android:gravity="center|left"
+            android:textSize="15dp"
+            android:textColor="@color/white"
+            android:text="00:10:21"></TextView>
 
 
     </LinearLayout>
