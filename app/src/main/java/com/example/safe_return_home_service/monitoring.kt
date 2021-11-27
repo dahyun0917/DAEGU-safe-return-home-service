@@ -28,6 +28,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.firestore.FirebaseFirestore
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.PathOverlay
@@ -73,12 +74,15 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
     private var SHAKE_SLOP_TIME_MS = 500;
     // 흔드는 횟수는 3초마다 초기화
     private var SHAKE_COUNT_RESET_TIME_MS = 3000
-
+    //private lateinit var db:FirebaseFirestore
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.monitoring)
+
+        var db= FirebaseFirestore.getInstance() //firebase
+
         btn_cctv = findViewById<ImageButton>(R.id.btn_cctv)
         btn_store = findViewById<ImageButton>(R.id.btn_store)
         btn_police = findViewById<ImageButton>(R.id.btn_police)
@@ -110,11 +114,30 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
             val intent = Intent(this, monitoring::class.java)
             startActivity(intent)
         }
+
+        btn_cctv.setOnClickListener {
+            Toast.makeText(this,"클릭함" ,Toast.LENGTH_SHORT).show()
+            db.collection("cctv")
+                .get()
+                .addOnSuccessListener{ result->
+                    Toast.makeText(this,"읽어오기 완료" ,Toast.LENGTH_SHORT).show()
+                    for(document in result){
+                        Log.d("cctv","지역 : ${document["지역"]}, latitude: ${document["latitude"]}, longitude: ${document["longitude"]}")
+                    }
+                }.addOnFailureListener { exception ->
+                    // 실패할 경우
+                    Toast.makeText(this,"읽어오기 실패" ,Toast.LENGTH_SHORT).show()
+                    Log.w("monitoring", "Error getting documents: $exception")
+                }
+        }
+
         btn_load.setOnClickListener {
             var startlocation = edit_start.text.toString();
             var arrivelocation = edit_arrive.text.toString();
 
         }
+
+
     }
     override fun onRequestPermissionsResult(
         requestCode: Int,

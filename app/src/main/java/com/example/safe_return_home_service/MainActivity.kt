@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.AssetManager
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
@@ -11,17 +12,28 @@ import android.location.LocationManager
 import android.media.Image
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.PermissionChecker
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.firestore.FirebaseFirestore
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
+import com.naver.maps.map.overlay.InfoWindow
+import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.naver.maps.map.widget.LocationButtonView
+import org.json.JSONArray
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStream
+import java.io.InputStreamReader
 import java.util.jar.Manifest
 
 
@@ -37,6 +49,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
     lateinit var btn_store : ImageButton
     lateinit var btn_police : ImageButton
     lateinit var btn_moni : ImageButton
+    var police=0
+    var policeArray:ArrayList<Marker> = ArrayList()
+    var storeArray:ArrayList<Marker> = ArrayList()
+    var cctvArray:ArrayList<Marker> = ArrayList()
+    var store=0
+    var cctv=0
+    val infoWindow = InfoWindow()
+
+
     // private val locationManager= context
     //    .getSystemService(Context.LOCATION_SERVICE) as LocationManager?
 
@@ -45,6 +66,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        //firestore
+        var db= FirebaseFirestore.getInstance() //firebase
+
+
         //네이버 지도
         //mapView = findViewById<View>(R.id.map_view) as MapView
         btn_cctv = findViewById<ImageButton>(R.id.btn_cctv)
@@ -73,6 +98,123 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
             val intent = Intent(this,monitoring ::class.java)
             startActivity(intent)
         }
+        btn_police.setOnClickListener {
+            if(police==0){
+
+            }
+        }
+
+        btn_police.setOnClickListener {
+            if(police==0){
+                val jsonString=assets.open("jsons/emergency.json").reader().readText()
+
+                var jsonArray = JSONArray(jsonString)
+
+                for (i in 0 until jsonArray.length() ){
+                    val marker= Marker()
+                    var jo = jsonArray.getJSONObject(i)
+                    var local=jo.getString("지역")
+                    var name=jo.getString("name")
+                    var location=jo.getString("location")
+                    var latitude=jo.getDouble("latitude")
+                    var longitude=jo.getDouble("longitude")
+                    marker.icon= OverlayImage.fromResource(R.drawable.police_station)
+                    marker.width=130
+                    marker.height=130
+                    marker.tag="$name\n위치 : $location"
+                    marker.setOnClickListener {
+                        infoWindow.open(marker)
+                        true
+                    }
+                    marker.position=LatLng(latitude,longitude)
+                    policeArray.add(marker)
+                    marker.map=naverMap
+                }
+
+                police=1
+            }
+            else{
+                for(marker in policeArray){
+                    marker.map=null
+                }
+                policeArray.clear()
+                police=0
+            }
+
+        }
+        btn_store.setOnClickListener {
+            if(store==0){
+                val jsonString=assets.open("jsons/convenience.json").reader().readText()
+
+                var jsonArray = JSONArray(jsonString)
+
+                for (i in 0 until jsonArray.length() ){
+                    val marker= Marker()
+                    var jo = jsonArray.getJSONObject(i)
+                    var name=jo.getString("편의점 이름")
+                    var location=jo.getString("위치")
+                    var latitude=jo.getDouble("latitude")
+                    var longitude=jo.getDouble("longitude")
+                    marker.icon= OverlayImage.fromResource(R.drawable.store_pin2)
+                    marker.width=130
+                    marker.height=130
+                    marker.tag="$name\n위치 : $location"
+                    marker.setOnClickListener {
+                        infoWindow.open(marker)
+                        true
+                    }
+                    marker.position=LatLng(latitude,longitude)
+                    storeArray.add(marker)
+                    marker.map=naverMap
+                }
+                store=1
+            }
+            else{
+                for(marker in storeArray){
+                    marker.map=null
+                }
+                storeArray.clear()
+                store=0
+            }
+
+        }
+        infoWindow.adapter = object : InfoWindow.DefaultTextAdapter(applicationContext) {
+            override fun getText(infoWindow: InfoWindow): CharSequence {
+                return infoWindow.marker?.tag as CharSequence? ?: ""
+            }
+        }
+
+
+
+        btn_cctv.setOnClickListener {
+            if(cctv==0){
+                val jsonString=assets.open("jsons/cctv.json").reader().readText()
+
+                var jsonArray = JSONArray(jsonString)
+
+                for (i in 0 until jsonArray.length() ){
+                    val marker= Marker()
+                    var jo = jsonArray.getJSONObject(i)
+                    var local=jo.getString("지역")
+                    var latitude=jo.getDouble("latitude")
+                    var longitude=jo.getDouble("longitude")
+                    marker.icon= OverlayImage.fromResource(R.drawable.cctv_pin)
+                    marker.width=40
+                    marker.height=40
+                    marker.position=LatLng(latitude,longitude)
+                    cctvArray.add(marker)
+                    marker.map=naverMap
+                }
+                cctv=1
+            }
+            else{
+                for(marker in cctvArray){
+                    marker.map=null
+                }
+                cctvArray.clear()
+                cctv=0
+            }
+        }
 //        locationSource = FusedLocationSource(this,LOCATION_PERMISSION_REQUEST_CODE)
 //        naverMap.locationSource = locationSource
 //        var fragmentManager : FragmentManager = supportFragmentManager;
@@ -83,6 +225,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
 //        }
 //        mapFragment.getMapAsync(this)
     }
+
     override fun onRequestPermissionsResult(requestCode: Int,
                                             permissions: Array<String>,
                                             grantResults: IntArray) {
@@ -104,7 +247,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         naverMap.maxZoom =18.0
         naverMap.minZoom = 10.0
         //지도 위치 이동
-        val cameraUpdate = CameraUpdate.scrollTo(LatLng(37.497801,127.027591))
+        val cameraUpdate = CameraUpdate.scrollTo(LatLng(35.798838,128.583052))
         naverMap.moveCamera(cameraUpdate)
         //현위치 버튼 기능
         val uiSetting = naverMap.uiSettings
@@ -113,6 +256,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         currentLocationButton.map = naverMap
         locationSource= FusedLocationSource(this,LOCATION_PERMISSION_REQUEST_CODE)
         naverMap.locationSource = locationSource
+
+        naverMap.setOnMapClickListener { pointF, latLng ->
+            infoWindow.close()
+        }
     }
 
     override fun onStart(){
