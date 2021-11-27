@@ -2,6 +2,7 @@ package com.example.safe_return_home_service
 
 
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -19,6 +20,7 @@ import android.media.MediaRecorder
 import android.os.Bundle
 import android.os.Environment
 import android.os.PersistableBundle
+import android.os.SystemClock
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -65,17 +67,15 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
     private val currentLocationButton: LocationButtonView by lazy { findViewById(R.id.currentLocationButton) }
     //센서 관리자 객체 얻기
     private val sensorManager1 by lazy {getSystemService(Context.SENSOR_SERVICE) as SensorManager }
-
+    var eventTime = 0
     // 중력, 중력가속도을 기준으로 삼아서 진동, 움직임을 측정한다.
     // 흔들림 감지할 때 기준이 되는 가해지는 힘
-    private var SHAKE_THRESHOLD_GRAVITY = 2.7F;
+    private var SHAKE_THRESHOLD_GRAVITY = 2.7F
     // 흔들림 감지할때 최소 0.5초를 기준으로 측정한다.
-    private var SHAKE_SLOP_TIME_MS = 500;
+    private var SHAKE_SKIP_MS = 500
     // 흔드는 횟수는 3초마다 초기화
     private var SHAKE_COUNT_RESET_TIME_MS = 3000
-
-
-
+    private var mShakeCount = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.monitoring)
@@ -193,8 +193,32 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
 
     override fun onSensorChanged(event: SensorEvent?) {
         event?.let{
-            Log.d("monitoring","x:${event.values[0]},y:${event.values[1]},z:${event.values[2]}")
-            //[0] x축값, [1] y 축값, [2] z축
+            if(event.sensor.type == Sensor.TYPE_ACCELEROMETER) {
+                var axisX :Float = event.values[0]
+                var axisY :Float= event.values[1]
+                var axisZ :Float= event.values[2]
+
+                var gravityX: Float = axisX / SensorManager.GRAVITY_EARTH
+                var gravityY: Float = axisY / SensorManager.GRAVITY_EARTH
+                var gravityZ: Float = axisZ / SensorManager.GRAVITY_EARTH
+
+                var f:Float = gravityX * gravityX + gravityY * gravityY + gravityZ * gravityZ
+                var squaredD :Double= Math.sqrt(f.toDouble())
+                var gForce: Float = squaredD.toFloat()
+
+                if (gForce > SHAKE_THRESHOLD_GRAVITY) {
+                    var currentTime : Long = System.currentTimeMillis()
+                   if(SystemClock.elapsedRealtime() - eventTime < SHAKE_SKIP_MS){
+                       return
+                    }
+                    eventTime = currentTime.toInt()
+                    mShakeCount++
+                     Log.d(TAG,"Shake 발생 " + mShakeCount)
+                    Toast.makeText(this@monitoring, "Shake 발생", Toast.LENGTH_SHORT).show()
+                    // 메세지 112랑 보호자에게 현재위치랑 같이 메세지
+                }
+
+            }
         }
     }
 

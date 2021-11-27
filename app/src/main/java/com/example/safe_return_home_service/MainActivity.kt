@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
     lateinit var btn_police : ImageButton
     lateinit var btn_moni : ImageButton
     // private val locationManager= context
-    //    .getSystemService(Context.LOCATION_SERVICE) as LocationManager?
+    //    .getSys temService(Context.LOCATION_SERVICE) as LocationManager?
 
     private val currentLocationButton: LocationButtonView by lazy { findViewById(R.id.currentLocationButton) }
 
@@ -46,7 +46,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         //네이버 지도
-        //mapView = findViewById<View>(R.id.map_view) as MapView
         btn_cctv = findViewById<ImageButton>(R.id.btn_cctv)
         btn_store = findViewById<ImageButton>(R.id.btn_store)
         btn_police = findViewById<ImageButton>(R.id.btn_police)
@@ -56,7 +55,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         btn_moni = findViewById(R.id.walk)
         mapView!!.onCreate(savedInstanceState)
         mapView!!.getMapAsync(this)
-
         btn_setting.setOnClickListener{
             val intent = Intent(this,setting ::class.java)
             startActivity(intent)
@@ -73,15 +71,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
             val intent = Intent(this,monitoring ::class.java)
             startActivity(intent)
         }
-//        locationSource = FusedLocationSource(this,LOCATION_PERMISSION_REQUEST_CODE)
-//        naverMap.locationSource = locationSource
-//        var fragmentManager : FragmentManager = supportFragmentManager;
-//        var mapFragment : MapFragment = fragmentManager.findFragmentById(R.id.map_view) as MapFragment
-//        if(mapFragment == null){
-//            mapFragment = MapFragment.newInstance()
-//            fragmentManager.beginTransaction().add(R.id.map_view,mapFragment).commit()
-//        }
-//        mapFragment.getMapAsync(this)
     }
     override fun onRequestPermissionsResult(requestCode: Int,
                                             permissions: Array<String>,

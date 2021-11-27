@@ -1,37 +1,54 @@
 package com.example.safe_return_home_service
 
-import android.app.PendingIntent
+import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Address
+import android.location.Geocoder
+import android.location.Location
+import android.location.LocationManager
 import android.media.MediaRecorder
 import android.os.Bundle
 import android.os.Environment
 import android.os.Looper
 import android.telephony.SmsManager
+import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import java.io.IOException
+import java.lang.reflect.Array.get
+import java.security.AccessController.getContext
 import java.util.*
-import java.util.jar.Manifest
+import kotlin.collections.HashMap
 
 
-class signal: AppCompatActivity() {
+class signal: AppCompatActivity(){
     private var output: String? = null
     private var mediaRecorder: MediaRecorder? = null
     private var state: Boolean = false
 
     lateinit var btn_cancle : Button
+    var clientId = "ooywnneloz"
+    var clientSecret = "4CXBAfjeIwW4pAxpecj9lC1v5r5D0vF3UJcSj8Hk"
+    lateinit var requestHeaders : HashMap<String,String>
 
     var time = 0
 
     var count=0
     private var timerTask: Timer? = null
 
-
     lateinit var sms : SmsManager
+    //현재위치 가져오기 위함
+    lateinit var locationManager : LocationManager
+    var REQUEST_CODE_LOCATION = 2
+
+    //위도,경도 바꾸기 위해
+    val geocoder = Geocoder(this)
 
     private val multiplePermissionsCode = 100
     private val requiredPermissions = arrayOf(
@@ -45,6 +62,8 @@ class signal: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.signal)
         btn_cancle = findViewById(R.id.btn_cancle)
+        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
         /*val permissions=ArrayList<String>()
         if ((ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_SMS) +
                     ContextCompat.checkSelfPermission(this, android.Manifest.permission.SEND_SMS))
@@ -111,12 +130,32 @@ class signal: AppCompatActivity() {
             val intent = Intent(this,MainActivity ::class.java)
             startActivity(intent)
         }
-
+        requestHeaders.put("X-NCP-APIGW-API-KEY-ID:",clientId)
+        requestHeaders.put("X-NCP-APIGW-API-KEY:",clientSecret)
 
 
     }
 
+    private fun getMyLocation(): Location? {
+        var currentLocation : Location? = null
 
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+        }
+        var locationProvider:String = LocationManager.GPS_PROVIDER
+        currentLocation = locationManager.getLastKnownLocation(locationProvider)
+        if(currentLocation != null){
+            var lng = currentLocation.longitude
+            var lat = currentLocation.latitude
+        }
+        return currentLocation
+    }
     private fun startRecording(){
         //config and create MediaRecorder Object
         val fileName: String = Date().getTime().toString() + ".mp3"
@@ -175,15 +214,47 @@ class signal: AppCompatActivity() {
     fun SendSMS(){
         //var phoneNo = "01025335441";
         //var sms = "안녕";
+        var latitude : Double
+        var longitude : Double
+        var userLocation = getMyLocation()!!
+        var list : List<Address>?=null
+        if(userLocation != null){
+            latitude = 35.890043//userLocation.latitude
+            longitude = 128.611324//userLocation.longitude
+            Toast.makeText(this@signal, "$latitude $longitude", Toast.LENGTH_LONG).show()
+            var apiURL = "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=$latitude ,$longitude"
+            try{
+                list= geocoder.getFromLocation(
+                    latitude!!,
+                    longitude!!,
+                    1
+                )
+            }catch (e : IOException){
+                e.printStackTrace()
+                Toast.makeText(this@signal, "주소를 가져올 수 없습니다.", Toast.LENGTH_LONG).show()
+            }
+
+            if(list != null){
+                if(list.size !=0)
+                Log.d("현재 주소",list[0].getAddressLine(0))
+                else {
+                    Toast.makeText(this@signal, "해당되는 주소 정보는 없습니다.", Toast.LENGTH_SHORT).show()
+
+                }
+            }
+
+        }
 
         sms = SmsManager.getDefault()
-        sms.sendTextMessage("01025335441", null, "안녕", null,null)
+        sms.sendTextMessage(
+            "01025335441",
+            null,
+            "hi",
+            null,
+            null
+        )
         Toast.makeText(this@signal, "문자발송.", Toast.LENGTH_SHORT).show()
 
 
     }
-
-
-
-
 }
