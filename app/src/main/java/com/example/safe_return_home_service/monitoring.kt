@@ -387,7 +387,7 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
 
 
             })
-            SendSMS() //message 전송
+            //SendSMS() //message 전송
         }
 
         btn_exit.setOnClickListener {
@@ -566,29 +566,6 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
                         mShakeCount++
                         Log.d(TAG, "Shake 발생 " + mShakeCount)
                         Toast.makeText(this@monitoring, "Shake 발생", Toast.LENGTH_SHORT).show()
-
-                        /*for (permission in requiredPermissions) {
-                            if (ContextCompat.checkSelfPermission(
-                                    this,
-                                    permission
-                                ) != PackageManager.PERMISSION_GRANTED
-                            ) {
-                                //만약 권한이 없다면 rejectedPermissionList에 추가
-                                rejectedPermissionList.add(permission)
-                            }
-                        }
-                        if (rejectedPermissionList.isNotEmpty()) {
-                            //권한 요청!
-                            val array = arrayOfNulls<String>(rejectedPermissionList.size)
-                            ActivityCompat.requestPermissions(
-                                this,
-                                rejectedPermissionList.toArray(array),
-                                multiplePermissionsCode
-                            )
-                            SendSMS()
-                        } else {
-                            SendSMS()
-                        }*/
                         SendSMS()
                         //현재 위치 디비에 저장
                         // 메세지 112랑 보호자에게 현재위치랑 같이 메세지
@@ -602,33 +579,35 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
         }
 
         fun SendSMS() {
-            //var phoneNo = "01025335441";
-            //var sms = "안녕";
             var latitude: Double = 0.0
             var longitude: Double = 0.0
-            var userLocation = getMyLocation()!!
-            if (userLocation != null) {
-                latitude = userLocation.latitude
-                longitude = userLocation.longitude
-                Toast.makeText(this@monitoring, "$latitude $longitude", Toast.LENGTH_LONG).show()
+            latitude = now_lat
+            longitude = now_long
 
-            }
             var lat: String = latitude.toString()
             var lon: String = longitude.toString()
             var LatLon = location_data()
+            var result : String = ""
             LatLon.lat = lat
             LatLon.lng = lon
+            fbFirestore = FirebaseFirestore.getInstance()
+            fbFirestore!!.collection("information").document("${MySharedPreferences.getUserId(this)}")
+                .get()
+                .addOnSuccessListener { document ->
+                    var nokphone = document["nokphone"] as String
+                    var name = document["name"] as String
+                    sms = SmsManager.getDefault()
+                    sms.sendTextMessage(
+                        "$nokphone",
+                        null,
+                        "현재 $name 님이 $lat $lon 에서 신고를 하였습니다.",
+                        null,
+                        null
+                    )
+                }
             fbFirestore?.collection("reported info")?.document()?.set(LatLon)
-            Toast.makeText(this@monitoring, "현재위치가 신고되었습니다..", Toast.LENGTH_SHORT).show()
             sms = SmsManager.getDefault()
-            sms.sendTextMessage(
-                "01090489628",
-                null,
-                "$lat $lon",
-                null,
-                null
-            )
-            Toast.makeText(this@monitoring, "보호자에게 문자발송이 되었습니다.", Toast.LENGTH_SHORT).show()
+
         }
     private fun startRecording(){
         //config and create MediaRecorder Object

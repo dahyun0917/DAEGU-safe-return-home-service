@@ -49,7 +49,7 @@ class signal: AppCompatActivity(){
     lateinit var locationManager : LocationManager
     var REQUEST_CODE_LOCATION = 2
     //위도,경도 바꾸기 위해
-    val geocoder = Geocoder(this, Locale.getDefault())
+    val geocoder = Geocoder(this)
     var nokphone : String? = null
     lateinit var lat: String
     lateinit var lon : String
@@ -63,6 +63,7 @@ class signal: AppCompatActivity(){
         android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
         android.Manifest.permission.READ_EXTERNAL_STORAGE
     )
+    lateinit var result : String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.signal)
@@ -82,7 +83,7 @@ class signal: AppCompatActivity(){
                 sms.sendTextMessage(
                     "$nokphone",
                     null,
-                    "현재 $name 님이 $lat $lon 에서 신고를 하였습니다.",
+                    "현재 $name 님이 $result 에서 신고를 하였습니다.",
                     null,
                     null
                 )
@@ -202,25 +203,6 @@ class signal: AppCompatActivity(){
     fun SendSMS(){
 
             Toast.makeText(this@signal, "$latitude $longitude", Toast.LENGTH_SHORT).show()
-            try {
-                list = geocoder.getFromLocation(
-                    latitude!!,
-                    longitude!!,
-                    1
-                )
-            } catch (e: IOException) {
-                e.printStackTrace()
-                Toast.makeText(this@signal, "주소를 가져올 수 없습니다.", Toast.LENGTH_LONG).show()
-            } catch (illegalArgumentException: IllegalArgumentException) {
-                Toast.makeText(this, "잘못된 GPS 좌표", Toast.LENGTH_SHORT).show()
-            }
-            if (list != null) {
-                if (list?.size != null) {
-                    Toast.makeText(this@signal, "$list", Toast.LENGTH_LONG).show()
-                } else {
-                    Toast.makeText(this@signal, "오", Toast.LENGTH_LONG).show()
-                }
-            }
 
         lat = latitude.toString()
         lon = longitude.toString()
