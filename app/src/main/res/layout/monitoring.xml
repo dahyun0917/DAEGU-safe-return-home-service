@@ -37,7 +37,8 @@
             android:ems="10"
             android:hint="도착지"
             android:inputType="textPersonName"
-            android:textSize="24sp" />
+            android:textSize="24sp"
+            />
 
             <Button
                 android:id="@+id/load"
@@ -46,6 +47,15 @@
                 android:layout_marginTop="25dp"
                 android:layout_marginLeft="300dp"
                 android:text="길찾기" />
+            <Button
+                android:id="@+id/exit"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="25dp"
+                android:layout_marginLeft="300dp"
+                android:text="길찾기 종료"
+                android:visibility="invisible"
+                />
 
 
         <com.naver.maps.map.widget.LocationButtonView
