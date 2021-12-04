@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
     var store=0
     var cctv=0
     val infoWindow = InfoWindow()
+    var now_lat=0.0;var now_long=0.0
 
 
     // private val locationManager= context
@@ -83,6 +84,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         }
         btn_signal.setOnClickListener{
             val intent = Intent(this,signal ::class.java)
+            intent.putExtra("now_lat",now_lat)
+            intent.putExtra("now_long",now_long)
             startActivity(intent)
         }
         btn_moni.setOnClickListener {
@@ -243,6 +246,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
 
         naverMap.setOnMapClickListener { pointF, latLng ->
             infoWindow.close()
+        }
+
+        naverMap.addOnLocationChangeListener { location ->
+            now_lat = location.latitude;now_long = location.longitude;
+
+            //Toast.makeText(this, "${location.latitude}, ${location.longitude}",
+            //    Toast.LENGTH_SHORT).show()
         }
 
         //위험도 표시

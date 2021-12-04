@@ -284,7 +284,7 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
             var arrivelocation = edit_arrive.text.toString();
             var list : List<Address>?=null
 
-            Toast.makeText(this, "${now_lat}, ${now_long}", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this, "${now_lat}, ${now_long}", Toast.LENGTH_SHORT).show()
 
 
             if (arrivelocation==null||arrivelocation=="")  {
@@ -348,6 +348,7 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
             //길찾기 시작
             var callgetPath =
                 api.getPath(APIKEY_ID, APIKEY, "${start_long}, ${start_lat}", "${goal_long}, ${goal_lat}")
+
 
 
             callgetPath.enqueue(object : Callback<ResultPath> {
