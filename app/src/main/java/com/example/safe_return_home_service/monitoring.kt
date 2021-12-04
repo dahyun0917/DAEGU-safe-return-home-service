@@ -57,6 +57,7 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
     private var state: Boolean = false
     var time = 0
     var count= 0
+    //var k=0
     private var timerTask: Timer? = null
 
     var police=0
