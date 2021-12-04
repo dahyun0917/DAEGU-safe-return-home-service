@@ -1,7 +1,6 @@
 package com.example.safe_return_home_service
 
 
-import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
@@ -12,22 +11,14 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.location.*
-import android.media.Image
 import android.media.MediaRecorder
-import android.os.Bundle
-import android.os.Environment
-import android.os.PersistableBundle
-import android.os.SystemClock
+import android.os.*
 import android.telephony.SmsManager
 import android.util.Log
-import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.PermissionChecker
-import androidx.fragment.app.FragmentManager
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
@@ -43,13 +34,9 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Url
+import java.io.File
 import java.io.IOException
-import java.net.HttpURLConnection
-import java.net.URLEncoder
 import java.util.*
-import java.util.jar.Manifest
-
 
 class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener {
     private var LOCATION_PERMISSION_REQUEST_CODE = 1000;
@@ -65,6 +52,13 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
     lateinit var btn_police: ImageButton
     lateinit var btn_moni: ImageButton
 
+    private var output: String? = null
+    private var mediaRecorder: MediaRecorder? = null
+    private var state: Boolean = false
+    var time = 0
+    var count= 0
+    private var timerTask: Timer? = null
+
     var police=0
     var policeArray:ArrayList<Marker> = ArrayList()
     var storeArray:ArrayList<Marker> = ArrayList()
@@ -72,6 +66,16 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
     var store=0
     var cctv=0
     val infoWindow = InfoWindow()
+
+    private val requiredPermissions1 = arrayOf(
+        android.Manifest.permission.RECORD_AUDIO,
+        android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        android.Manifest.permission.READ_EXTERNAL_STORAGE
+    )
+    private val requiredPermissions2 = arrayOf(
+        android.Manifest.permission.SEND_SMS,
+        android.Manifest.permission.READ_SMS
+    )
 
     var APIKEY_ID = "j01tozred3"
     var APIKEY = "qMNcbT8wDWV2X56NmQCHYIsFxeNWPvXvmZUznXHo"
@@ -108,11 +112,8 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
     var fbFirestore: FirebaseFirestore? = null
     var locationManager: LocationManager ?=null
     private val multiplePermissionsCode = 100
-    private val requiredPermissions = arrayOf(
-        android.Manifest.permission.SEND_SMS,
-        android.Manifest.permission.READ_SMS
-    )
-    var rejectedPermissionList = ArrayList<String>()
+    var rejectedPermissionList1 = ArrayList<String>()
+    var rejectedPermissionList2 = ArrayList<String>()
     lateinit var sms : SmsManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -149,16 +150,16 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
         btn_signal.setOnClickListener {
            // var userLocation = getMyLocation()!!
 
-            for(permission in requiredPermissions){
+            for(permission in requiredPermissions2){
                 if(ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
                     //만약 권한이 없다면 rejectedPermissionList에 추가
-                    rejectedPermissionList.add(permission)
+                    rejectedPermissionList2.add(permission)
                 }
             }
-            if(rejectedPermissionList.isNotEmpty()){
+            if(rejectedPermissionList2.isNotEmpty()){
                 //권한 요청!
-                val array = arrayOfNulls<String>(rejectedPermissionList.size)
-                ActivityCompat.requestPermissions(this, rejectedPermissionList.toArray(array), multiplePermissionsCode)
+                val array = arrayOfNulls<String>(rejectedPermissionList2.size)
+                ActivityCompat.requestPermissions(this, rejectedPermissionList2.toArray(array), multiplePermissionsCode)
                 SendSMS()
             }
             else{
@@ -292,6 +293,7 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
                 return@setOnClickListener
             }
 
+
 //            var current=getMyLocation()!!
 
             Log.d("location","위도 : ${now_lat}, 경도 : ${now_long}")
@@ -346,6 +348,22 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
             }
 
             //길찾기 시작
+            for(permission in requiredPermissions1){
+                if(ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                    //만약 권한이 없다면 rejectedPermissionList에 추가
+                    rejectedPermissionList1.add(permission)
+                }
+            }
+            if(rejectedPermissionList1.isNotEmpty()){
+                //권한 요청!
+                val array = arrayOfNulls<String>(rejectedPermissionList1.size)
+                ActivityCompat.requestPermissions(this, rejectedPermissionList1.toArray(array), multiplePermissionsCode)
+                startRecording()
+            }
+            else{
+                startRecording()
+            }
+
             var callgetPath =
                 api.getPath(APIKEY_ID, APIKEY, "${start_long}, ${start_lat}", "${goal_long}, ${goal_lat}")
 
@@ -556,22 +574,22 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
                         Log.d(TAG, "Shake 발생 " + mShakeCount)
                         Toast.makeText(this@monitoring, "Shake 발생", Toast.LENGTH_SHORT).show()
 
-                        for (permission in requiredPermissions) {
+                        for (permission in requiredPermissions2) {
                             if (ContextCompat.checkSelfPermission(
                                     this,
                                     permission
                                 ) != PackageManager.PERMISSION_GRANTED
                             ) {
                                 //만약 권한이 없다면 rejectedPermissionList에 추가
-                                rejectedPermissionList.add(permission)
+                                rejectedPermissionList2.add(permission)
                             }
                         }
-                        if (rejectedPermissionList.isNotEmpty()) {
+                        if (rejectedPermissionList2.isNotEmpty()) {
                             //권한 요청!
-                            val array = arrayOfNulls<String>(rejectedPermissionList.size)
+                            val array = arrayOfNulls<String>(rejectedPermissionList2.size)
                             ActivityCompat.requestPermissions(
                                 this,
-                                rejectedPermissionList.toArray(array),
+                                rejectedPermissionList2.toArray(array),
                                 multiplePermissionsCode
                             )
                             SendSMS()
@@ -618,4 +636,63 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
             )
             Toast.makeText(this@monitoring, "보호자에게 문자발송이 되었습니다.", Toast.LENGTH_SHORT).show()
         }
+    private fun startRecording(){
+        //config and create MediaRecorder Object
+        var file= File(Environment.getExternalStorageDirectory().path+"/Download/"+"safe_return_home/")
+        if(!file.exists()){
+            file.mkdirs()
+        }
+        val fileName: String = Date().getTime().toString() + ".mp3"
+        output = Environment.getExternalStorageDirectory().absolutePath + "/Download/"+"safe_return_home/" + fileName//내장메모리 밑에 위치
+        mediaRecorder = MediaRecorder()
+        mediaRecorder?.setAudioSource((MediaRecorder.AudioSource.MIC))
+        mediaRecorder?.setOutputFormat((MediaRecorder.OutputFormat.MPEG_4))
+        mediaRecorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+        mediaRecorder?.setOutputFile(output)
+
+        try {
+            mediaRecorder?.prepare()
+            mediaRecorder?.start()
+            state = true
+            Toast.makeText(this@monitoring, "레코딩 시작되었습니다.", Toast.LENGTH_SHORT).show()
+            timer()
+            //if(state==false)Toast.makeText(this@signal, "시간초과로 중지 되었습니다.", Toast.LENGTH_SHORT).show()
+        } catch (e: IllegalStateException){
+            e.printStackTrace()
+        } catch (e: IOException){
+            e.printStackTrace()
+        }
+
+    }
+    private fun stopRecording(){
+        if(state){
+            mediaRecorder?.stop()
+            mediaRecorder?.reset()
+            mediaRecorder?.release()
+            state = false
+            if(count==1) Toast.makeText(getApplicationContext(),"중지 되었습니다.", Toast.LENGTH_LONG).show();
+            else{
+                Looper.prepare();
+                Toast.makeText(getApplicationContext(),"시간초과로 중지 되었습니다.", Toast.LENGTH_LONG).show();
+                val intent = Intent(this,MainActivity ::class.java)
+                startActivity(intent)
+                Looper.loop();
+            }
+        } else {
+            Toast.makeText(this@monitoring, "레코딩 상태가 아닙니다.", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this,MainActivity ::class.java)
+            startActivity(intent)
+        }
+    }
+    fun timer(){
+        time=0
+        timerTask = kotlin.concurrent.timer(period = 1000,initialDelay = 1000) { //반복주기는 peroid 프로퍼티로 설정, 단위는 1000분의 1초 (period = 1000, 1초)
+            time++ // period=10으로 0.01초마다 time를 1씩 증가하게 됩니다
+            if (time == 7200) {
+                timerTask?.cancel();
+                //Toast.makeText(this@signal, "시간초과로 중지 되었습니다.", Toast.LENGTH_SHORT).show()
+                stopRecording()
+            }
+        }
+    }
 }

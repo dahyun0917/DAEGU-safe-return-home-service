@@ -234,7 +234,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         naverMap.maxZoom =18.0
         naverMap.minZoom = 10.0
         //지도 위치 이동
-        val cameraUpdate = CameraUpdate.scrollTo(LatLng(37.497801,127.027591))
+        val cameraUpdate = CameraUpdate.scrollTo(LatLng(35.8874092, 128.6127373))
         naverMap.moveCamera(cameraUpdate)
         //현위치 버튼 기능
         val uiSetting = naverMap.uiSettings
