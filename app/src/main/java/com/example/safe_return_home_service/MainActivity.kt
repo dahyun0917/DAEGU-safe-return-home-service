@@ -108,7 +108,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         }
         btn_signal.setOnClickListener{
             val intent = Intent(this,signal ::class.java)
-            Toast.makeText(this, "$now_lat $now_long", Toast.LENGTH_SHORT).show()
             if(now_lat !=0.0 && now_long !=0.0) {
                 intent.putExtra("now_lat", now_lat)
                 intent.putExtra("now_long", now_long)
