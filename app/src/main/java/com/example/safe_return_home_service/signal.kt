@@ -40,7 +40,6 @@ class signal: AppCompatActivity(){
 
     var fbFirestore : FirebaseFirestore?=null
     var time = 0
-
     var count=0
     private var timerTask: Timer? = null
     var latitude : Double = 0.0
@@ -69,6 +68,10 @@ class signal: AppCompatActivity(){
         setContentView(R.layout.signal)
         btn_cancle = findViewById(R.id.btn_cancle)
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if(intent.hasExtra("now_lat")&& intent.hasExtra("now_long")) {
+            latitude = intent.getDoubleExtra("now_lat", 0.0)!!
+            longitude = intent.getDoubleExtra("now_long", 0.0)!!
+        }
         fbFirestore = FirebaseFirestore.getInstance()
         fbFirestore!!.collection("information").document("${MySharedPreferences.getUserId(this)}")
             .get()
@@ -197,31 +200,27 @@ class signal: AppCompatActivity(){
 
     }
     fun SendSMS(){
-        var userLocation= getMyLocation()
-//        if(userLocation != null) {
-        latitude = 37.57204210851489//userLocation.latitude
-        longitude = 128.6090332//userLocation.longitude
-        Toast.makeText(this@signal, "$latitude $longitude", Toast.LENGTH_SHORT).show()
-//            try {
-//                list = geocoder.getFromLocation(
-//                    latitude!!,
-//                    longitude!!,
-//                    1
-//                )
-//            } catch (e: IOException) {
-//                e.printStackTrace()
-//                Toast.makeText(this@signal, "주소를 가져올 수 없습니다.", Toast.LENGTH_LONG).show()
-//            } catch (illegalArgumentException: IllegalArgumentException) {
-//                Toast.makeText(this, "잘못된 GPS 좌표", Toast.LENGTH_SHORT).show()
-//            }
-//            if(list!=null){
-//                if(list?.size != null){
-//                    Toast.makeText(this@signal,"$list", Toast.LENGTH_LONG).show()
-//                }
-//                else{
-//                    Toast.makeText(this@signal,"오", Toast.LENGTH_LONG).show()
-//                }
-//            }
+
+            Toast.makeText(this@signal, "$latitude $longitude", Toast.LENGTH_SHORT).show()
+            try {
+                list = geocoder.getFromLocation(
+                    latitude!!,
+                    longitude!!,
+                    1
+                )
+            } catch (e: IOException) {
+                e.printStackTrace()
+                Toast.makeText(this@signal, "주소를 가져올 수 없습니다.", Toast.LENGTH_LONG).show()
+            } catch (illegalArgumentException: IllegalArgumentException) {
+                Toast.makeText(this, "잘못된 GPS 좌표", Toast.LENGTH_SHORT).show()
+            }
+            if (list != null) {
+                if (list?.size != null) {
+                    Toast.makeText(this@signal, "$list", Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(this@signal, "오", Toast.LENGTH_LONG).show()
+                }
+            }
 
         lat = latitude.toString()
         lon = longitude.toString()
