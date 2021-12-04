@@ -16,6 +16,8 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.firebase.firestore.FirebaseFirestore
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
@@ -48,6 +50,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
     val infoWindow = InfoWindow()
     var now_lat=0.0;var now_long=0.0
 
+    var rejectedPermissionList = java.util.ArrayList<String>()
+    private val multiplePermissionsCode = 100
+
+    private val requiredPermissions = arrayOf(
+        android.Manifest.permission.RECORD_AUDIO,
+        android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        android.Manifest.permission.READ_EXTERNAL_STORAGE,
+        android.Manifest.permission.SEND_SMS,
+        android.Manifest.permission.READ_SMS
+    )
 
     // private val locationManager= context
     //    .getSystemService(Context.LOCATION_SERVICE) as LocationManager?
@@ -73,6 +85,18 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         mapView!!.getMapAsync(this)
 
 
+
+        for(permission in requiredPermissions){
+            if(ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                //만약 권한이 없다면 rejectedPermissionList에 추가
+                rejectedPermissionList.add(permission)
+            }
+        }
+        if(rejectedPermissionList.isNotEmpty()){
+            //권한 요청!
+            val array = arrayOfNulls<String>(rejectedPermissionList.size)
+            ActivityCompat.requestPermissions(this, rejectedPermissionList.toArray(array), multiplePermissionsCode)
+        }
 
         btn_setting.setOnClickListener{
             val intent = Intent(this,setting ::class.java)

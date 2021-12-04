@@ -58,7 +58,6 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
     private var state: Boolean = false
     var time = 0
     var count= 0
-    //var k=0
     private var timerTask: Timer? = null
 
     var police=0
@@ -69,15 +68,13 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
     var cctv=0
     val infoWindow = InfoWindow()
 
-    private val requiredPermissions1 = arrayOf(
+    /*private val requiredPermissions = arrayOf(
         android.Manifest.permission.RECORD_AUDIO,
         android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        android.Manifest.permission.READ_EXTERNAL_STORAGE
-    )
-    private val requiredPermissions2 = arrayOf(
+        android.Manifest.permission.READ_EXTERNAL_STORAGE,
         android.Manifest.permission.SEND_SMS,
         android.Manifest.permission.READ_SMS
-    )
+    )*/
 
     var APIKEY_ID = "j01tozred3"
     var APIKEY = "qMNcbT8wDWV2X56NmQCHYIsFxeNWPvXvmZUznXHo"
@@ -113,9 +110,9 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
     private var mShakeCount = 0
     var fbFirestore: FirebaseFirestore? = null
     var locationManager: LocationManager ?=null
-    private val multiplePermissionsCode = 100
-    var rejectedPermissionList1 = ArrayList<String>()
-    var rejectedPermissionList2 = ArrayList<String>()
+    //private val multiplePermissionsCode = 100
+    //var rejectedPermissionList = ArrayList<String>()
+
     lateinit var sms : SmsManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -141,6 +138,8 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
         mapView!!.onCreate(savedInstanceState)
         mapView!!.getMapAsync(this)
 
+
+
         btn_setting.setOnClickListener {
             val intent = Intent(this, setting::class.java)
             startActivity(intent)
@@ -153,21 +152,9 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
         btn_signal.setOnClickListener {
            // var userLocation = getMyLocation()!!
 
-            for(permission in requiredPermissions2){
-                if(ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-                    //만약 권한이 없다면 rejectedPermissionList에 추가
-                    rejectedPermissionList2.add(permission)
-                }
-            }
-            if(rejectedPermissionList2.isNotEmpty()){
-                //권한 요청!
-                val array = arrayOfNulls<String>(rejectedPermissionList2.size)
-                ActivityCompat.requestPermissions(this, rejectedPermissionList2.toArray(array), multiplePermissionsCode)
-                SendSMS()
-            }
-            else{
-                SendSMS()
-            }
+
+            SendSMS()
+
         }
 //        btn_moni.setOnClickListener {
 //            val intent = Intent(this, monitoring::class.java)
@@ -350,21 +337,9 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
             }
 
             //길찾기 시작
-            for(permission in requiredPermissions1){
-                if(ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-                    //만약 권한이 없다면 rejectedPermissionList에 추가
-                    rejectedPermissionList1.add(permission)
-                }
-            }
-            if(rejectedPermissionList1.isNotEmpty()){
-                //권한 요청!
-                val array = arrayOfNulls<String>(rejectedPermissionList1.size)
-                ActivityCompat.requestPermissions(this, rejectedPermissionList1.toArray(array), multiplePermissionsCode)
-                startRecording()
-            }
-            else{
-                startRecording()
-            }
+
+            startRecording()
+
 
             var callgetPath =
                 api.getPath(APIKEY_ID, APIKEY, "${start_long}, ${start_lat}", "${goal_long}, ${goal_lat}")
@@ -416,6 +391,9 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
         }
 
         btn_exit.setOnClickListener {
+            timerTask?.cancel();
+            count=1
+            stopRecording()
             val i = Intent(this, monitoring::class.java)
             finish()
             overridePendingTransition(0, 0)
@@ -589,28 +567,29 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
                         Log.d(TAG, "Shake 발생 " + mShakeCount)
                         Toast.makeText(this@monitoring, "Shake 발생", Toast.LENGTH_SHORT).show()
 
-                        for (permission in requiredPermissions2) {
+                        /*for (permission in requiredPermissions) {
                             if (ContextCompat.checkSelfPermission(
                                     this,
                                     permission
                                 ) != PackageManager.PERMISSION_GRANTED
                             ) {
                                 //만약 권한이 없다면 rejectedPermissionList에 추가
-                                rejectedPermissionList2.add(permission)
+                                rejectedPermissionList.add(permission)
                             }
                         }
-                        if (rejectedPermissionList2.isNotEmpty()) {
+                        if (rejectedPermissionList.isNotEmpty()) {
                             //권한 요청!
-                            val array = arrayOfNulls<String>(rejectedPermissionList2.size)
+                            val array = arrayOfNulls<String>(rejectedPermissionList.size)
                             ActivityCompat.requestPermissions(
                                 this,
-                                rejectedPermissionList2.toArray(array),
+                                rejectedPermissionList.toArray(array),
                                 multiplePermissionsCode
                             )
                             SendSMS()
                         } else {
                             SendSMS()
-                        }
+                        }*/
+                        SendSMS()
                         //현재 위치 디비에 저장
                         // 메세지 112랑 보호자에게 현재위치랑 같이 메세지
                     }

@@ -88,17 +88,7 @@ class record_list : AppCompatActivity() {
             val intent = Intent(this, setting::class.java)
             startActivity(intent)
         }
-        var btn_signal = findViewById<ImageButton>(R.id.signal)
-        btn_signal.setOnClickListener {
-            val intent = Intent(this, signal::class.java)
-            startActivity(intent)
-        }
-        var btn_mike = findViewById<ImageButton>(R.id.mike)
-        btn_mike.setOnClickListener {
-            val intent = Intent(this, record_list::class.java)
-            startActivity(intent)
 
-        }
         //recordListView.setOnItemClickListener{ parent: AdapterView<*>, view: View, position: Int, id: Long ->
         recordListView.setOnItemClickListener{ arg1,arg2,arg3,arg4 ->
             //Toast.makeText(this, "hi",Toast.LENGTH_SHORT).show()
