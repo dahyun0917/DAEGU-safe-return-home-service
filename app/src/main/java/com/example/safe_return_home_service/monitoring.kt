@@ -90,10 +90,10 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
 
     // 중력, 중력가속도을 기준으로 삼아서 진동, 움직임을 측정한다.
     // 흔들림 감지할 때 기준이 되는 가해지는 힘
-    private var SHAKE_THRESHOLD_GRAVITY = 2.7F
+    private var SHAKE_THRESHOLD_GRAVITY = 3.0F
 
     // 흔들림 감지할때 최소 0.5초를 기준으로 측정한다.
-    private var SHAKE_SKIP_MS = 500
+    private var SHAKE_SKIP_MS = 1000
 
     // 흔드는 횟수는 3초마다 초기화
     private var SHAKE_COUNT_RESET_TIME_MS = 3000
@@ -564,7 +564,6 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
                         }
                         eventTime = currentTime.toInt()
                         mShakeCount++
-                        Log.d(TAG, "Shake 발생 " + mShakeCount)
                         Toast.makeText(this@monitoring, "Shake 발생", Toast.LENGTH_SHORT).show()
                         SendSMS()
                         //현재 위치 디비에 저장
