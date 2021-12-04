@@ -133,6 +133,7 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
         var btn_load = findViewById<Button>(R.id.load)
         var edit_start = findViewById<EditText>(R.id.start)
         var edit_arrive = findViewById<EditText>(R.id.arrive)
+        var btn_exit = findViewById<Button>(R.id.exit)
         fbFirestore = FirebaseFirestore.getInstance()
         mapView!!.onCreate(savedInstanceState)
         mapView!!.getMapAsync(this)
@@ -165,10 +166,10 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
                 SendSMS()
             }
         }
-        btn_moni.setOnClickListener {
-            val intent = Intent(this, monitoring::class.java)
-            startActivity(intent)
-        }
+//        btn_moni.setOnClickListener {
+//            val intent = Intent(this, monitoring::class.java)
+//            startActivity(intent)
+//        }
 
         btn_police.setOnClickListener {
             if (police == 0) {
@@ -279,7 +280,6 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
 
         btn_load.setOnClickListener {
 
-
             var startlocation = edit_start.text.toString();
             var arrivelocation = edit_arrive.text.toString();
             var list : List<Address>?=null
@@ -350,6 +350,10 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
                 api.getPath(APIKEY_ID, APIKEY, "${start_long}, ${start_lat}", "${goal_long}, ${goal_lat}")
 
 
+            btn_load.visibility=View.INVISIBLE
+            edit_start.visibility=View.INVISIBLE
+            edit_arrive.visibility=View.INVISIBLE
+            btn_exit.visibility=View.VISIBLE
 
             callgetPath.enqueue(object : Callback<ResultPath> {
                 override fun onResponse(
@@ -388,6 +392,15 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
 
 
             })
+            SendSMS() //message 전송
+        }
+
+        btn_exit.setOnClickListener {
+            val i = Intent(this, monitoring::class.java)
+            finish()
+            overridePendingTransition(0, 0)
+            startActivity(i)
+            overridePendingTransition(0, 0)
         }
     }
 
