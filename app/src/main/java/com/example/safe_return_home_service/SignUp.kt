@@ -93,10 +93,10 @@ class SignUp: AppCompatActivity() {
             auth?.createUserWithEmailAndPassword(email, password)
                 ?.addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        Toast.makeText(this, "계정 생성 완료.",Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "회원가입에 성공하였습니다.",Toast.LENGTH_SHORT).show()
                         //finish() // 가입창 종료
                     } else {
-                        Toast.makeText(this, "계정 생성 실패",Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "회원가입에 실패하였습니다.",Toast.LENGTH_SHORT).show()
                     }
                 }
         }

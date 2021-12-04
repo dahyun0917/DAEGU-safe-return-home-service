@@ -35,7 +35,7 @@ class signal: AppCompatActivity(){
     private var output: String? = null
     private var mediaRecorder: MediaRecorder? = null
     private var state: Boolean = false
-
+    private lateinit var geocoder:Geocoder
     lateinit var btn_cancle : Button
 
     var fbFirestore : FirebaseFirestore?=null
@@ -49,7 +49,6 @@ class signal: AppCompatActivity(){
     lateinit var locationManager : LocationManager
     var REQUEST_CODE_LOCATION = 2
     //위도,경도 바꾸기 위해
-    val geocoder = Geocoder(this)
     var nokphone : String? = null
     lateinit var lat: String
     lateinit var lon : String
@@ -69,6 +68,9 @@ class signal: AppCompatActivity(){
         setContentView(R.layout.signal)
         btn_cancle = findViewById(R.id.btn_cancle)
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        //geocoder
+        geocoder=Geocoder(this)
+
         if(intent.hasExtra("now_lat")&& intent.hasExtra("now_long")) {
             latitude = intent.getDoubleExtra("now_lat", 0.0)!!
             longitude = intent.getDoubleExtra("now_long", 0.0)!!
@@ -87,7 +89,7 @@ class signal: AppCompatActivity(){
                     null,
                     null
                 )
-                Toast.makeText(this@signal, "문자발송.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@signal, "보호자에게 문자 발송되었습니다.", Toast.LENGTH_SHORT).show()
             }
 
         var rejectedPermissionList = ArrayList<String>()
@@ -156,7 +158,7 @@ class signal: AppCompatActivity(){
             mediaRecorder?.prepare()
             mediaRecorder?.start()
             state = true
-            Toast.makeText(this@signal, "레코딩 시작되었습니다.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@signal, "녹음 시작되었습니다.", Toast.LENGTH_SHORT).show()
             timer()
             //if(state==false)Toast.makeText(this@signal, "시간초과로 중지 되었습니다.", Toast.LENGTH_SHORT).show()
         } catch (e: IllegalStateException){
@@ -172,16 +174,16 @@ class signal: AppCompatActivity(){
             mediaRecorder?.reset()
             mediaRecorder?.release()
             state = false
-            if(count==1) Toast.makeText(getApplicationContext(),"중지 되었습니다.", Toast.LENGTH_LONG).show();
+            if(count==1) Toast.makeText(getApplicationContext(),"녹음 중지 되었습니다.", Toast.LENGTH_LONG).show();
             else{
                 Looper.prepare();
-                Toast.makeText(getApplicationContext(),"시간초과로 중지 되었습니다.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),"시간초과로 녹음 중지 되었습니다.", Toast.LENGTH_LONG).show();
                 val intent = Intent(this,MainActivity ::class.java)
                 startActivity(intent)
                 Looper.loop();
             }
         } else {
-            Toast.makeText(this@signal, "레코딩 상태가 아닙니다.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@signal, "녹음 상태가 아닙니다.", Toast.LENGTH_SHORT).show()
             val intent = Intent(this,MainActivity ::class.java)
             startActivity(intent)
         }
@@ -200,19 +202,38 @@ class signal: AppCompatActivity(){
     fun changeLocation(){
 
     }
-    fun SendSMS(){
+    fun SendSMS() {
+        var latitude1: Double = 0.0
+        var longitude1: Double = 0.0
+        //var result1: String = ""
 
-            Toast.makeText(this@signal, "$latitude $longitude", Toast.LENGTH_SHORT).show()
+        latitude1 = latitude
+        longitude1 = longitude
 
-        lat = latitude.toString()
-        lon = longitude.toString()
+
+        if(latitude1!=0.0&&longitude1!=0.0){
+            try{
+                var list = geocoder.getFromLocation(
+                    latitude1,
+                    longitude1,
+                    10
+                )
+                result=list[0].getAddressLine(0).substring(5)
+                //Toast.makeText(this,"${result}",Toast.LENGTH_LONG).show()
+            }catch(e: IOException){
+                Toast.makeText(this,"현재 주소를 찾을 수 없습니다.",Toast.LENGTH_LONG).show()
+            }
+        }
+
+        var lat: String = latitude.toString()
+        var lon: String = longitude.toString()
         var LatLon = location_data()
+        //var result : String = ""
         LatLon.lat = lat
         LatLon.lng = lon
 
         fbFirestore?.collection("reported info")?.document()?.set(LatLon)
         sms = SmsManager.getDefault()
-        //       }
 
     }
 }

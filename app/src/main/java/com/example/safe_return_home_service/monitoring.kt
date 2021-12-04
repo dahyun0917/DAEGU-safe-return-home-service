@@ -565,7 +565,6 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
                         eventTime = currentTime.toInt()
                         mShakeCount++
                         Log.d(TAG, "Shake 발생 " + mShakeCount)
-                        Toast.makeText(this@monitoring, "Shake 발생", Toast.LENGTH_SHORT).show()
                         SendSMS()
                         //현재 위치 디비에 저장
                         // 메세지 112랑 보호자에게 현재위치랑 같이 메세지
@@ -581,13 +580,30 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
         fun SendSMS() {
             var latitude: Double = 0.0
             var longitude: Double = 0.0
+            var result1: String = ""
+
             latitude = now_lat
             longitude = now_long
+
+
+            if(now_lat!=0.0&&now_long!=0.0){
+                try{
+                    var list = geocoder.getFromLocation(
+                    now_lat,
+                    now_long,
+                    10
+                    )
+                    result1=list[0].getAddressLine(0).substring(5)
+                    //Toast.makeText(this,"${result1}",Toast.LENGTH_LONG).show()
+                }catch(e: IOException){
+                    Toast.makeText(this,"현재 주소를 찾을 수 없습니다.",Toast.LENGTH_LONG).show()
+                }
+            }
 
             var lat: String = latitude.toString()
             var lon: String = longitude.toString()
             var LatLon = location_data()
-            var result : String = ""
+            //var result : String = ""
             LatLon.lat = lat
             LatLon.lng = lon
             fbFirestore = FirebaseFirestore.getInstance()
@@ -600,7 +616,8 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
                     sms.sendTextMessage(
                         "$nokphone",
                         null,
-                        "현재 $name 님이 $lat $lon 에서 신고를 하였습니다.",
+                        "현재 $name 님이 $result1 에서 신고를 하였습니다.",
+//                        "현재 $name 님이 $lat $lon 에서 신고를 하였습니다.",
                         null,
                         null
                     )
@@ -627,7 +644,7 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
             mediaRecorder?.prepare()
             mediaRecorder?.start()
             state = true
-            Toast.makeText(this@monitoring, "레코딩 시작되었습니다.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@monitoring, "녹음 시작되었습니다.", Toast.LENGTH_SHORT).show()
             timer()
             //if(state==false)Toast.makeText(this@signal, "시간초과로 중지 되었습니다.", Toast.LENGTH_SHORT).show()
         } catch (e: IllegalStateException){
@@ -643,16 +660,16 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
             mediaRecorder?.reset()
             mediaRecorder?.release()
             state = false
-            if(count==1) Toast.makeText(getApplicationContext(),"중지 되었습니다.", Toast.LENGTH_LONG).show();
+            if(count==1) Toast.makeText(getApplicationContext(),"녹음 중지 되었습니다.", Toast.LENGTH_LONG).show();
             else{
                 Looper.prepare();
-                Toast.makeText(getApplicationContext(),"시간초과로 중지 되었습니다.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),"시간초과로 녹음 중지 되었습니다.", Toast.LENGTH_LONG).show();
                 val intent = Intent(this,MainActivity ::class.java)
                 startActivity(intent)
                 Looper.loop();
             }
         } else {
-            Toast.makeText(this@monitoring, "레코딩 상태가 아닙니다.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@monitoring, "녹음 상태가 아닙니다.", Toast.LENGTH_SHORT).show()
             val intent = Intent(this,MainActivity ::class.java)
             startActivity(intent)
         }
