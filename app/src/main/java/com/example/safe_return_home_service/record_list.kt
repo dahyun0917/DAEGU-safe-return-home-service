@@ -1,6 +1,7 @@
 package com.example.safe_return_home_service
 
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
@@ -81,17 +82,18 @@ class record_list : AppCompatActivity() {
         recordListView.adapter = recordAdapter
         //recordListView.adapter = MainListAdapter(this, rlist)
 
-        btn_setting = findViewById<ImageButton>(R.id.setting)
+        var btn_setting = findViewById<ImageButton>(R.id.setting)
+
         btn_setting.setOnClickListener {
             val intent = Intent(this, setting::class.java)
             startActivity(intent)
         }
-        btn_signal = findViewById<ImageButton>(R.id.signal)
-        btn_signal = {
+        var btn_signal = findViewById<ImageButton>(R.id.signal)
+        btn_signal.setOnClickListener {
             val intent = Intent(this, signal::class.java)
             startActivity(intent)
         }
-        btn_mike = findViewById<ImageButton>(R.id.mike)
+        var btn_mike = findViewById<ImageButton>(R.id.mike)
         btn_mike.setOnClickListener {
             val intent = Intent(this, record_list::class.java)
             startActivity(intent)

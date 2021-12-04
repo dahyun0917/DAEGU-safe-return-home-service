@@ -57,7 +57,7 @@
             android:backgroundTint="@color/white"
             android:enabled="true"
             android:hint="비밀번호"
-            android:inputType="@string/password_hing"
+            android:inputType="textPassword"
             android:textColorHint="@color/blue"
             android:textColor="@color/white"
             android:textSize="25dp"></EditText>
