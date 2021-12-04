@@ -16,6 +16,8 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.firebase.firestore.FirebaseFirestore
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
@@ -56,7 +58,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        //firestore
 
 
         //네이버 지도
@@ -70,7 +71,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         btn_moni = findViewById(R.id.walk)
         mapView!!.onCreate(savedInstanceState)
         mapView!!.getMapAsync(this)
-
 
 
         btn_setting.setOnClickListener{
@@ -231,7 +231,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         naverMap.maxZoom =18.0
         naverMap.minZoom = 10.0
         //지도 위치 이동
-        val cameraUpdate = CameraUpdate.scrollTo(LatLng(37.497801,127.027591))
+        val cameraUpdate = CameraUpdate.scrollTo(LatLng(35.8874092,128.6127373))
         naverMap.moveCamera(cameraUpdate)
         //현위치 버튼 기능
         val uiSetting = naverMap.uiSettings
