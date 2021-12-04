@@ -15,6 +15,7 @@ import android.media.MediaRecorder
 import android.os.*
 import android.telephony.SmsManager
 import android.util.Log
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -369,7 +370,7 @@ class monitoring : AppCompatActivity(), OnMapReadyCallback, SensorEventListener 
                 api.getPath(APIKEY_ID, APIKEY, "${start_long}, ${start_lat}", "${goal_long}, ${goal_lat}")
 
 
-            btn_load.visibility=View.INVISIBLE
+            btn_load.visibility= View.INVISIBLE
             edit_start.visibility=View.INVISIBLE
             edit_arrive.visibility=View.INVISIBLE
             btn_exit.visibility=View.VISIBLE
