@@ -57,7 +57,7 @@
 ### [ 프로젝트에 활용된 기술 ]
 <img src="https://img.shields.io/badge/Firebase-FFCA28?style=flat-square&logo=firebase&logoColor=white"/> - Firebase Cloud Firestore Database를 활용한 데이터베이스 개발
 
-<img src="https://img.shields.io/badge/AndroidStudio-0c70f2?style=flat-square&logo=AndroidStudio&logoColor=92b8b1"/> - java를 사용한 안드로이드 어플리케이션 개발
+<img src="https://img.shields.io/badge/AndroidStudio-0c70f2?style=flat-square&logo=AndroidStudio&logoColor=92b8b1"/> <img src="https://img.shields.io/badge/Kotlin-7F52FF?style=flat-square&logo=Kotlin&logoColor=white"/> - Kotlin을 사용한 안드로이드 어플리케이션 개발
 
 <img src="https://img.shields.io/badge/NaverCloudPlatform-03C75A?style=flat-square&logo=Naver&logoColor=white"/> - 네이버 클라우드 플랫폼의 지도 API, 길찾기 API 사용하여 기능 구현
 
